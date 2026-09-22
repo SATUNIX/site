@@ -1,0 +1,72 @@
+---
+// Page shell: meta, global styles, motion state, header and footer.
+// `animated` pages load the ASCII runtime; article and CV pages leave it off and ship no JS.
+import "@/styles/base.css";
+import "@/styles/layout.css";
+import "@/styles/prose.css";
+import "@/styles/ascii.css";
+import "@/styles/print.css";
+
+import AsciiRuntime from "@/components/AsciiRuntime.astro";
+import MotionState from "@/components/MotionState.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import SiteHeader from "@/components/SiteHeader.astro";
+import { site } from "@/config/site";
+import { absolute, asset, basePath, path } from "@/lib/url";
+
+interface Props {
+	title?: string;
+	description?: string;
+	/** Site-relative path of this page for the canonical URL, e.g. "blog/". */
+	canonical?: string;
+	noindex?: boolean;
+	animated?: boolean;
+	bodyClass?: string;
+}
+
+const {
+	title,
+	description = site.description,
+	canonical,
+	noindex = false,
+	animated = false,
+	bodyClass = "",
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${site.name}` : site.name;
+const pathname = Astro.url.pathname;
+const canonicalPath =
+	canonical ??
+	(basePath() && pathname.startsWith(basePath()) ? pathname.slice(basePath().length) : pathname);
+---
+
+<!doctype html>
+<html lang="en" data-motion="off">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="color-scheme" content="dark" />
+		<meta name="theme-color" content="#161616" />
+		<title>{fullTitle}</title>
+		<meta name="description" content={description} />
+		<link rel="canonical" href={absolute(canonicalPath)} />
+		{noindex && <meta name="robots" content="noindex" />}
+		<link rel="icon" href={asset("favicon.svg")} type="image/svg+xml" />
+		<link rel="alternate" type="application/rss+xml" title={site.name} href={path(site.links.rss)} />
+		<meta property="og:title" content={fullTitle} />
+		<meta property="og:description" content={description} />
+		<meta property="og:type" content="website" />
+		{animated && <MotionState />}
+	</head>
+	<body class={bodyClass}>
+		<a class="skip-link" href="#main">Skip to content</a>
+		<div class="page">
+			<SiteHeader />
+			<main id="main" class="page__main">
+				<slot />
+			</main>
+			<SiteFooter motionToggle={animated} />
+		</div>
+		{animated && <AsciiRuntime />}
+	</body>
+</html>

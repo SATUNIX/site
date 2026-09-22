@@ -1,0 +1,83 @@
+/* ASCII text effects: presentation layer for src/scripts/ascii/.
+   Elements with [data-ascii] hold their FINAL text in the HTML; the script rewrites it per frame.
+   Only html[data-motion="on"] animates. */
+
+.ascii {
+	font-family: var(--font-mono);
+	font-weight: 400;
+	white-space: pre;
+	letter-spacing: 0;
+	line-height: 1.2;
+	/* JetBrains Mono ligatures would merge "->", "::" and "==" and break the grid. */
+	font-variant-ligatures: none;
+	font-feature-settings: "liga" 0, "calt" 0;
+	user-select: none;
+	color: var(--color-art);
+}
+
+/* Reveal overlay: the real text stays in place (and in the accessibility tree) but is painted
+   transparent while an aria-hidden copy on top animates. Layout is reserved by the real text. */
+.reveal {
+	position: relative;
+}
+
+.reveal__art {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+html[data-motion="on"] .reveal__text {
+	color: transparent;
+}
+
+html:not([data-motion="on"]) .reveal__art {
+	display: none;
+}
+
+/* Hidden until scrolled into view. If the script never runs, a delayed animation shows the text
+   anyway so nothing is lost; once the runtime is ready it takes over. */
+html[data-motion="on"] [data-ascii]:not([data-inview]) {
+	visibility: hidden;
+	animation: ascii-failsafe 0s 2.5s forwards;
+}
+
+html[data-motion="on"][data-ascii-ready] [data-ascii]:not([data-inview]) {
+	animation: none;
+}
+
+html[data-motion="on"] [data-ascii][data-inview] {
+	animation: ascii-in var(--dur-slow) var(--ease-out);
+}
+
+@keyframes ascii-failsafe {
+	to {
+		visibility: visible;
+	}
+}
+
+@keyframes ascii-in {
+	from {
+		opacity: 0.35;
+	}
+}
+
+/* Small bracketed mono controls: [ motion: on ], [ replay ]. Text only, no icons or outlines. */
+.text-button {
+	appearance: none;
+	background: none;
+	border: 0;
+	padding: 0.25em 0;
+	margin: 0;
+	font: inherit;
+	font-family: var(--font-mono);
+	font-size: var(--step--1);
+	color: var(--color-fg-muted);
+	cursor: pointer;
+	font-variant-ligatures: none;
+}
+
+.text-button:hover,
+.text-button[aria-pressed="true"] {
+	color: var(--color-accent);
+}

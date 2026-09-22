@@ -1,0 +1,123 @@
+/* Base element styles, self-hosted fonts, reduced-motion and pause handling.
+   Imported by every page. No borders or dividers. */
+
+@import "./tokens.css";
+
+/* JetBrains Mono, OFL-1.1, vendored under public/fonts/jetbrains-mono/.
+   The URL is relative so the bundler emits it correctly under any base path:
+   the CSS lands in dist/_astro/ and ../fonts/ resolves to the site root's /fonts/. */
+@font-face {
+	font-family: "JetBrains Mono";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("../fonts/jetbrains-mono/JetBrainsMono-Regular.woff2")
+		format("woff2");
+}
+
+@font-face {
+	font-family: "JetBrains Mono";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("../fonts/jetbrains-mono/JetBrainsMono-Bold.woff2") format("woff2");
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	background: var(--color-bg);
+	color: var(--color-fg);
+	font-family: var(--font-sans);
+	font-size: 100%;
+	line-height: 1.6;
+	-webkit-text-size-adjust: 100%;
+	text-rendering: optimizeLegibility;
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	background: var(--color-bg);
+	color: var(--color-fg);
+	font-family: var(--font-sans);
+	font-size: var(--step-0);
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-family: var(--font-sans);
+	font-weight: 700;
+	line-height: 1.1;
+	margin: 0;
+	letter-spacing: -0.01em;
+}
+
+p,
+ul,
+ol,
+blockquote,
+figure,
+pre {
+	margin: 0;
+}
+
+a {
+	color: var(--color-accent);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+
+/* Keyboard focus stays visible: a functional affordance, not decoration. */
+:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+}
+
+code,
+kbd,
+samp,
+pre {
+	font-family: var(--font-mono);
+}
+
+img,
+canvas,
+svg {
+	display: block;
+	max-width: 100%;
+}
+
+/* Motion: pause everything when the operator asks, or when the OS says reduce. */
+[data-motion="paused"] *,
+[data-motion="paused"] *::before,
+[data-motion="paused"] *::after {
+	animation-play-state: paused !important;
+	transition: none !important;
+	scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}

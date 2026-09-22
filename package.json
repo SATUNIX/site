@@ -1,0 +1,26 @@
+{
+  "name": "personal-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "node scripts/derive-fingerprint.mjs && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "check:site": "node scripts/check-site.mjs",
+    "test": "vitest run",
+    "verify": "npm run check && npm run test && npm run build && npm run check:site"
+  },
+  "engines": {
+    "node": ">=22.11.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.4",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
+  }
+}

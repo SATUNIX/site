@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+*.local
+
+# Test / coverage output
+coverage/
+.vitest/
+test-results/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editors / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# Pi agent runtime state (keep committed config: agents/, ctx-contributions/)
+.pi/trace.jsonl
+.pi/task-classification.json
+.pi/tmp/
+.pi/subagent/
+.pi/human-console/pending/
+.pi/human-console/resolved/

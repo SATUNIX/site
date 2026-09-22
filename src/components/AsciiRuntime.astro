@@ -1,0 +1,10 @@
+---
+// Loads the ASCII effects runtime (bundled by Astro, deduplicated per page).
+// Render this only on pages that use [data-ascii] elements.
+---
+
+<script>
+	import { initAscii } from "@/scripts/ascii";
+
+	initAscii();
+</script>

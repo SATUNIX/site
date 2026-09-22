@@ -1,0 +1,112 @@
+---
+// Homepage wordmark: the site name rendered as a shaded ASCII banner at build time, animated
+// by the ASCII runtime. The real name is the (visually hidden) h1; the art is aria-hidden.
+//
+// The mode switch is a prototype control for choosing between the three entrances. Once one is
+// chosen, set `mode` and pass `showModeSwitch={false}` (or delete the controls block).
+import RevealText from "@/components/RevealText.astro";
+import { site } from "@/config/site";
+import { columnsOf, renderBanner } from "@/scripts/ascii/font";
+
+type Mode = "etch" | "decrypt" | "scatter";
+
+interface Props {
+	text?: string;
+	mode?: Mode;
+	showModeSwitch?: boolean;
+}
+
+const { text = site.name, mode = "etch", showModeSwitch = true } = Astro.props;
+const art = renderBanner(text);
+const modes: Mode[] = ["etch", "decrypt", "scatter"];
+---
+
+<section class="hero container" aria-labelledby="hero-name">
+	<h1 id="hero-name" class="visually-hidden">{text}</h1>
+	<RevealText as="p" preset="label" class="hero__eyebrow" text={`> ${site.tagline}`} />
+	<div class="hero__frame" style={`--cols: ${columnsOf(art)}`}>
+		<pre
+			class="ascii hero__art"
+			data-ascii={`hero-${mode}`}
+			data-ascii-pointer
+			aria-hidden="true">{art}</pre>
+	</div>
+	{
+		showModeSwitch && (
+			<div class="hero__controls" role="group" aria-label="Wordmark animation" data-hero-controls>
+				{modes.map((m) => (
+					<button
+						class="text-button"
+						type="button"
+						data-hero-mode={m}
+						aria-pressed={m === mode ? "true" : "false"}
+					>
+						[ {m} ]
+					</button>
+				))}
+				<button class="text-button" type="button" data-hero-replay>
+					[ replay ]
+				</button>
+			</div>
+		)
+	}
+</section>
+
+<script>
+	import { play } from "@/scripts/ascii";
+	import type { PresetName } from "@/scripts/ascii/presets";
+
+	const art = document.querySelector<HTMLElement>(".hero__art");
+	const controls = document.querySelector<HTMLElement>("[data-hero-controls]");
+	if (art && controls) {
+		if (document.documentElement.dataset.motion === "reduced") controls.hidden = true;
+		controls.addEventListener("click", (event) => {
+			const button = (event.target as Element).closest<HTMLButtonElement>("button");
+			if (!button) return;
+			const mode = button.dataset.heroMode;
+			if (mode) {
+				for (const b of controls.querySelectorAll("[data-hero-mode]")) {
+					b.setAttribute("aria-pressed", String(b === button));
+				}
+				play(art, `hero-${mode}` as PresetName);
+			} else if (button.hasAttribute("data-hero-replay")) {
+				play(art);
+			}
+		});
+	}
+</script>
+
+<style>
+	.hero {
+		padding-block: var(--space-4) var(--space-5);
+	}
+
+	.hero__eyebrow {
+		font-family: var(--font-mono);
+		font-size: var(--step--1);
+		color: var(--color-fg-muted);
+		margin-bottom: var(--space-3);
+	}
+
+	/* The banner scales to fit its column count exactly: JetBrains Mono advances 0.6em per glyph,
+	   so font-size = available width / (cols * 0.6). Capped so short names don't get huge. */
+	.hero__frame {
+		container-type: inline-size;
+	}
+
+	.hero__art {
+		font-size: min(1.1rem, calc(100cqi / (var(--cols) * 0.6)));
+		line-height: 1.2;
+		width: max-content;
+		max-width: 100%;
+		overflow: hidden;
+		touch-action: pan-y;
+	}
+
+	.hero__controls {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin-top: var(--space-2);
+	}
+</style>

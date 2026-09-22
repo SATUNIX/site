@@ -1,0 +1,16 @@
+---
+// Inline, render-blocking on purpose: sets <html data-motion> before first paint so animated
+// text never flashes. "on" animates; "paused" is the visitor's saved choice; "reduced" follows
+// the OS setting and cannot be overridden from the page.
+---
+
+<script is:inline>
+	(function () {
+		var m = "on";
+		try {
+			if (localStorage.getItem("motion") === "paused") m = "paused";
+		} catch (e) {}
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) m = "reduced";
+		document.documentElement.dataset.motion = m;
+	})();
+</script>

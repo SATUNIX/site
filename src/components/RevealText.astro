@@ -1,0 +1,25 @@
+---
+// Text that types itself in when scrolled into view.
+// The real text is the element's content (read by assistive tech, reserves layout); an
+// aria-hidden copy on top is what animates. Needs the ASCII runtime on the page.
+import type { PresetName } from "@/scripts/ascii/presets";
+
+type Tag = "h1" | "h2" | "h3" | "p" | "span" | "div" | "time";
+
+interface Props {
+	text: string;
+	preset?: Extract<PresetName, "label" | "meta" | "title" | "copy">;
+	as?: Tag;
+	class?: string;
+	[attr: string]: unknown;
+}
+
+const { text, preset = "title", as: Element = "span", class: className = "", ...rest } =
+	Astro.props;
+---
+
+<Element class:list={["reveal", className]} {...rest}
+	><span class="reveal__text">{text}</span><span class="reveal__art" data-ascii={preset} aria-hidden="true"
+		>{text}</span
+	></Element
+>

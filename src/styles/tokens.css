@@ -1,0 +1,48 @@
+/* Design tokens. The single place colours, type scale, spacing and motion live.
+   Components reference var(--...) only; no literal colours elsewhere.
+   Dark mode only. No borders, dividers, card outlines or shadows anywhere. */
+
+:root {
+	/* Colour */
+	--color-bg: #161616;
+	--color-fg: #f5f5f5;
+	--color-fg-muted: #9a9a9a;
+	--color-accent: #c2fe0b;
+	--color-code-bg: #1e1e1e;
+	/* Grayscale ink for ASCII artwork: a touch below --color-fg so dense glyph fields don't glare. */
+	--color-art: #cfcfcf;
+
+	/* Type */
+	--font-sans: Helvetica, Arial, sans-serif;
+	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+	--step--1: 0.875rem;
+	--step-0: 1rem;
+	--step-1: 1.25rem;
+	--step-2: 1.75rem;
+	--step-3: 2.5rem;
+	--step-4: clamp(3rem, 8vw, 6rem);
+	--hero-font-size: clamp(1.5rem, 3vw, 3rem);
+
+	/* Space */
+	--space-1: 0.5rem;
+	--space-2: 1rem;
+	--space-3: 2rem;
+	--space-4: 4rem;
+	--space-5: 8rem;
+	--space-6: clamp(6rem, 18vh, 14rem);
+
+	/* Layout */
+	--measure: 66ch;
+	--content-max: 72rem;
+	--gutter: clamp(1rem, 5vw, 4rem);
+
+	/* Motion */
+	--dur-fast: 180ms;
+	--dur-mid: 320ms;
+	--dur-slow: 600ms;
+	--dur-artwork: 1800ms;
+	--ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+	--ease-inout: cubic-bezier(0.65, 0.05, 0.36, 1);
+	--ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+	--radius: 0;
+}
