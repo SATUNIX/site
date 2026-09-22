@@ -42,8 +42,16 @@ const HREF_EXTENSIONS = new Set([
 ]);
 // Files allowed to contain root-absolute URLs: they *are* the base-path layer.
 const HREF_ALLOWLIST = new Set(["lib/url.ts", "config/site.ts"]);
-// Routes the foundation must emit. Extended as later phases add blog/cv/links/404/rss.
-const EXPECTED_ROUTES = ["index.html"];
+// Routes every production build must emit.
+const EXPECTED_ROUTES = [
+	"index.html",
+	"blog/index.html",
+	"cv/index.html",
+	"links/index.html",
+	"404.html",
+	"rss.xml",
+	"sitemap-index.xml",
+];
 
 const errors = [];
 const rel = (file) => path.relative(root, file).split(path.sep).join("/");

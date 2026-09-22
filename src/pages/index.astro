@@ -1,20 +1,164 @@
 ---
-// Temporary toolchain-proving page (Phase A Step 1). It will be replaced by the real
-// homepage hero in the next step. Intentionally contains no fabricated content.
-import "../styles/base.css";
-import "../styles/layout.css";
-import "../styles/prose.css";
-import "../styles/print.css";
+import HeroArtwork from "@/components/HeroArtwork.astro";
+import PostList from "@/components/PostList.astro";
+import RevealText from "@/components/RevealText.astro";
+import SectionHead from "@/components/SectionHead.astro";
+import { profile } from "@/data/profile";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPublishedPosts } from "@/lib/posts";
+import { path } from "@/lib/url";
+
+const recent = (await getPublishedPosts()).slice(0, 3);
+const keyWidth = Math.max(...profile.facts.map((f) => f.key.length));
+const routes = [
+	{ cmd: "cd writing/", href: path("blog/"), note: "notes, essays and write-ups" },
+	{ cmd: "cat cv.txt", href: path("cv/"), note: "experience and qualifications" },
+	{ cmd: "ls links/", href: path("links/"), note: "profiles, contact and public key" },
+];
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PLACEHOLDER NAME</title>
-  </head>
-  <body>
-    <h1>PLACEHOLDER NAME</h1>
-  </body>
-</html>
+<BaseLayout animated canonical="/">
+	<HeroArtwork />
+
+	<section class="container section about" aria-labelledby="about">
+		<SectionHead index="01" label="about" title="Hello." id="about" />
+		<div class="about__grid">
+			<div class="about__intro prose">
+				{
+					profile.intro.length > 0 ? (
+						profile.intro.map((para) => <p>{para}</p>)
+					) : (
+						<p class="unconfigured">
+							Intro not written yet: add paragraphs to src/data/profile.ts.
+						</p>
+					)
+				}
+			</div>
+			<dl class="readout" aria-label="Key information">
+				{
+					profile.facts.map((fact) => (
+						<div class="readout__row">
+							<dt>{fact.key.padEnd(keyWidth, " ")}</dt>
+							<dd>
+								{fact.value ? (
+									<RevealText preset="label" text={fact.value} />
+								) : (
+									<span class="readout__unset">unset</span>
+								)}
+							</dd>
+						</div>
+					))
+				}
+			</dl>
+		</div>
+	</section>
+
+	<section class="container section" aria-labelledby="writing">
+		<SectionHead index="02" label="writing" title="Recent writing" id="writing" />
+		<PostList posts={recent} />
+		<p class="more mono"><a href={path("blog/")}>ls writing/ --all</a></p>
+	</section>
+
+	<section class="container section section--wide" aria-labelledby="elsewhere">
+		<SectionHead index="03" label="index" title="Find your way around" id="elsewhere" />
+		<ul class="routes" role="list">
+			{
+				routes.map((r) => (
+					<li>
+						<a href={r.href}>
+							<span class="routes__prompt" aria-hidden="true">$ </span>
+							<RevealText preset="label" text={r.cmd} />
+						</a>
+						<span class="routes__note muted">{r.note}</span>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</BaseLayout>
+
+<style>
+	.about__grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+		gap: var(--space-4);
+		align-items: start;
+	}
+
+	.readout {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: var(--step--1);
+		font-variant-ligatures: none;
+	}
+
+	.readout__row {
+		display: flex;
+		gap: 2ch;
+		padding-block: 0.2em;
+	}
+
+	.readout dt {
+		white-space: pre;
+		color: var(--color-fg-muted);
+	}
+
+	.readout dt::after {
+		content: " :";
+	}
+
+	.readout dd {
+		margin: 0;
+		color: var(--color-fg);
+	}
+
+	.readout__unset {
+		color: var(--color-fg-muted);
+		opacity: 0.6;
+	}
+
+	.more {
+		margin-top: var(--space-3);
+		font-size: var(--step--1);
+	}
+
+	.routes {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: var(--space-3);
+	}
+
+	.routes li {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--space-1) var(--space-3);
+	}
+
+	.routes a {
+		font-family: var(--font-mono);
+		font-size: var(--step-2);
+		font-variant-ligatures: none;
+	}
+
+	.routes__prompt {
+		color: var(--color-fg-muted);
+	}
+
+	.routes__note {
+		font-size: var(--step--1);
+		font-family: var(--font-mono);
+	}
+
+	@media (max-width: 48rem) {
+		.about__grid {
+			grid-template-columns: 1fr;
+		}
+
+		.routes a {
+			font-size: var(--step-1);
+		}
+	}
+</style>

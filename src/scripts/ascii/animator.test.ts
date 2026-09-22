@@ -46,17 +46,20 @@ describe("Animator", () => {
 });
 
 describe("renderBanner", () => {
-	it("produces a printable ASCII rectangle", () => {
+	it("renders each word as a printable ASCII rectangle", () => {
 		const art = renderBanner("Hello World 42");
-		const widths = new Set(art.split("\n").map((l) => l.length));
-		expect(widths.size).toBe(1);
 		expect(art).toMatch(PRINTABLE);
-		expect(columnsOf(art)).toBe([...widths][0]);
+		const blocks = art.split("\n\n");
+		expect(blocks).toHaveLength(3);
+		for (const block of blocks) {
+			expect(new Set(block.split("\n").map((l) => l.length)).size).toBe(1);
+		}
+		expect(columnsOf(art)).toBe(Math.max(...art.split("\n").map((l) => l.length)));
 	});
 
 	it("stacks words and ignores unsupported characters", () => {
 		expect(renderBanner("A").split("\n")).toHaveLength(7);
-		expect(renderBanner("A B").split("\n")).toHaveLength(13);
-		expect(renderBanner("Aé")).toBe(renderBanner("A"));
+		expect(renderBanner("A B").split("\n")).toHaveLength(15);
+		expect(renderBanner(`A${String.fromCharCode(0xe9)}`)).toBe(renderBanner("A"));
 	});
 });

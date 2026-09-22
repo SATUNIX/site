@@ -1,0 +1,15 @@
+---
+import PostList from "@/components/PostList.astro";
+import SectionHead from "@/components/SectionHead.astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getPublishedPosts } from "@/lib/posts";
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title="Writing" description="Posts, newest first." animated>
+	<section class="container section section--wide">
+		<SectionHead label={`ls writing/  (${posts.length} entries)`} title="Writing" />
+		<PostList posts={posts} />
+	</section>
+</BaseLayout>

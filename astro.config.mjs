@@ -14,6 +14,11 @@ export default defineConfig({
 	base: site.base || "/",
 	output: "static",
 	trailingSlash: "always",
+	markdown: {
+		// Smart quotes and dashes are non-ASCII; the brief keeps all rendered text printable ASCII.
+		smartypants: false,
+		shikiConfig: { theme: "github-dark-default" },
+	},
 	integrations: [
 		sitemap({
 			// The custom 404 page must never appear in the sitemap.

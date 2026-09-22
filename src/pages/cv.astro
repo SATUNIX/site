@@ -1,0 +1,177 @@
+---
+// Public CV. Static (no animation runtime) and print-friendly: use the browser's print dialog
+// to produce a clean one-colour PDF.
+import { site } from "@/config/site";
+import { cv } from "@/data/cv";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="CV" description={`Curriculum vitae of ${site.name}.`}>
+	<article class="container cv">
+		<header class="cv__head">
+			<p class="meta">cat cv.txt</p>
+			<h1 class="cv__name">{site.name}</h1>
+			{
+				cv.summary ? (
+					<p class="cv__summary">{cv.summary}</p>
+				) : (
+					<p class="unconfigured">Summary not written yet: edit src/data/cv.ts.</p>
+				)
+			}
+		</header>
+
+		<section class="cv__section" aria-labelledby="cv-exp">
+			<h2 id="cv-exp" class="cv__label">Experience</h2>
+			{
+				cv.experience.length === 0 ? (
+					<p class="unconfigured">No roles added yet.</p>
+				) : (
+					<ol class="cv__list" role="list">
+						{cv.experience.map((role) => (
+							<li class="cv__item">
+								<p class="meta cv__period">{role.period}</p>
+								<div>
+									<h3 class="cv__role">
+										{role.title} <span class="muted">/ {role.org}</span>
+									</h3>
+									{role.points.length > 0 && (
+										<ul class="cv__points">
+											{role.points.map((p) => (
+												<li>{p}</li>
+											))}
+										</ul>
+									)}
+								</div>
+							</li>
+						))}
+					</ol>
+				)
+			}
+		</section>
+
+		<section class="cv__section" aria-labelledby="cv-qual">
+			<h2 id="cv-qual" class="cv__label">Qualifications</h2>
+			{
+				cv.qualifications.length === 0 ? (
+					<p class="unconfigured">No qualifications added yet.</p>
+				) : (
+					<ol class="cv__list" role="list">
+						{cv.qualifications.map((q) => (
+							<li class="cv__item">
+								<p class="meta cv__period">{q.year}</p>
+								<h3 class="cv__role">
+									{q.name} <span class="muted">/ {q.issuer}</span>
+								</h3>
+							</li>
+						))}
+					</ol>
+				)
+			}
+		</section>
+
+		<section class="cv__section" aria-labelledby="cv-skills">
+			<h2 id="cv-skills" class="cv__label">Skills</h2>
+			{
+				cv.skills.length === 0 ? (
+					<p class="unconfigured">No skills added yet.</p>
+				) : (
+					<dl class="cv__skills">
+						{cv.skills.map((group) => (
+							<div>
+								<dt class="meta">{group.label}</dt>
+								<dd>{group.items.join(", ")}</dd>
+							</div>
+						))}
+					</dl>
+				)
+			}
+		</section>
+	</article>
+</BaseLayout>
+
+<style>
+	.cv {
+		padding-block: var(--space-4) var(--space-5);
+		max-width: calc(var(--measure) + 14ch + 2 * var(--gutter));
+	}
+
+	.cv__name {
+		font-size: var(--step-4);
+		overflow-wrap: anywhere;
+		margin-block: var(--space-2) var(--space-3);
+	}
+
+	.cv__summary {
+		font-size: var(--step-1);
+		line-height: 1.5;
+		max-width: var(--measure);
+	}
+
+	.cv__section {
+		margin-top: var(--space-5);
+	}
+
+	.cv__label {
+		font-family: var(--font-mono);
+		font-size: var(--step--1);
+		font-weight: 400;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--color-fg-muted);
+		margin-bottom: var(--space-3);
+	}
+
+	.cv__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.cv__item {
+		display: grid;
+		grid-template-columns: 14ch 1fr;
+		gap: var(--space-1) var(--space-3);
+		padding-block: var(--space-2);
+		break-inside: avoid;
+	}
+
+	.cv__period {
+		padding-top: 0.3em;
+	}
+
+	.cv__role {
+		font-size: var(--step-1);
+	}
+
+	.cv__points {
+		margin-top: var(--space-1);
+		padding-left: 1.25em;
+		max-width: var(--measure);
+	}
+
+	.cv__skills {
+		display: grid;
+		gap: var(--space-2);
+		margin: 0;
+	}
+
+	.cv__skills dd {
+		margin: 0;
+	}
+
+	@media (max-width: 40rem) {
+		.cv__item {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media print {
+		.cv__name {
+			font-size: 24pt;
+		}
+
+		.cv__section {
+			margin-top: 1.5rem;
+		}
+	}
+</style>

@@ -1,0 +1,36 @@
+---
+// Numbered section heading: a mono index label ("01 / writing") over a large sans heading.
+// Both type in on scroll; the label carries the retro index, the heading stays readable.
+import RevealText from "@/components/RevealText.astro";
+
+interface Props {
+	index?: string;
+	label: string;
+	title: string;
+	id?: string;
+}
+
+const { index, label, title, id } = Astro.props;
+---
+
+<header class="section-head">
+	<RevealText as="p" preset="label" class="section-head__label" text={index ? `${index} / ${label}` : label} />
+	<RevealText as="h2" preset="title" class="section-head__title" text={title} id={id} />
+</header>
+
+<style>
+	.section-head {
+		margin-bottom: var(--space-3);
+	}
+
+	.section-head__label {
+		font-family: var(--font-mono);
+		font-size: var(--step--1);
+		color: var(--color-fg-muted);
+		margin-bottom: var(--space-1);
+	}
+
+	.section-head__title {
+		font-size: var(--step-3);
+	}
+</style>

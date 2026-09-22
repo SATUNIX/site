@@ -1,0 +1,102 @@
+---
+// External profiles, contact and the OpenPGP key. Unset links render as an explicit
+// unconfigured state rather than a dead or guessed URL.
+import RevealText from "@/components/RevealText.astro";
+import SectionHead from "@/components/SectionHead.astro";
+import { site } from "@/config/site";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { fingerprint, formatFingerprint, isPgpConfigured } from "@/lib/pgp";
+import { asset, path } from "@/lib/url";
+
+const entries = [
+	{ key: "github", href: site.links.github },
+	{ key: "linkedin", href: site.links.linkedin },
+	{ key: "contact", href: site.links.contact },
+	{ key: "rss", href: path(site.links.rss) },
+];
+const display = (href: string) => href.replace(/^mailto:/, "").replace(/^https?:\/\//, "");
+const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
+---
+
+<BaseLayout title="Links" description={`Where to find ${site.name}.`} animated>
+	<section class="container section section--wide">
+		<SectionHead label="ls links/" title="Links" />
+		<dl class="links">
+			{
+				entries.map((entry) => (
+					<div class="links__row">
+						<dt class="meta">{entry.key}</dt>
+						<dd>
+							{entry.href ? (
+								<a href={entry.href} rel={entry.href.startsWith("http") ? "me noopener" : undefined}>
+									<RevealText preset="label" text={display(entry.href)} />
+								</a>
+							) : (
+								<span class="unconfigured">not configured</span>
+							)}
+						</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
+
+	<section class="container section" aria-labelledby="pgp">
+		<SectionHead label="gpg --fingerprint" title="OpenPGP key" id="pgp" />
+		{
+			pgp && pgp.fingerprint ? (
+				<div class="pgp">
+					<p class="pgp__fpr mono">
+						<RevealText preset="meta" text={formatFingerprint(pgp.fingerprint)} />
+					</p>
+					<p class="mono">
+						<a href={asset(pgp.keyPath ?? "keys/public.asc")} download>
+							download public.asc
+						</a>
+					</p>
+				</div>
+			) : (
+				<p class="unconfigured">
+					No public key published yet. Put it at public/keys/public.asc; the fingerprint is
+					derived from the key at build time.
+				</p>
+			)
+		}
+	</section>
+</BaseLayout>
+
+<style>
+	.links {
+		margin: 0;
+		display: grid;
+		gap: var(--space-2);
+	}
+
+	.links__row {
+		display: grid;
+		grid-template-columns: 11ch 1fr;
+		gap: var(--space-3);
+		align-items: baseline;
+	}
+
+	.links dd {
+		margin: 0;
+		font-family: var(--font-mono);
+		font-size: var(--step-1);
+		overflow-wrap: anywhere;
+	}
+
+	.pgp__fpr {
+		font-size: var(--step-1);
+		letter-spacing: 0.04em;
+		max-width: 30ch;
+		margin-bottom: var(--space-2);
+	}
+
+	@media (max-width: 40rem) {
+		.links__row {
+			grid-template-columns: 1fr;
+			gap: 0;
+		}
+	}
+</style>

@@ -18,19 +18,38 @@ interface Props {
 
 const { text = site.name, mode = "etch", showModeSwitch = true } = Astro.props;
 const art = renderBanner(text);
+// Narrow screens get a half-width version (one character per pixel) so the name stays legible.
+const artCompact = renderBanner(text, { pixelWidth: 1 });
 const modes: Mode[] = ["etch", "decrypt", "scatter"];
+// Swap to the compact banner where the wide one would render below 7px type
+// (JetBrains Mono advances 0.6em per glyph). Depends on the name, so it is computed here.
+const switchAt = Math.ceil(columnsOf(art) * 0.6 * 7);
+// Selectors carry an extra class to outrank Astro's scoped (attribute-qualified) rules.
+const switchCss = `@container hero (max-width: ${switchAt}px) {
+	.hero__frame .hero__art.hero__art--wide { display: none; }
+	.hero__frame .hero__art.hero__art--compact { display: block; }
+}`;
 ---
 
 <section class="hero container" aria-labelledby="hero-name">
 	<h1 id="hero-name" class="visually-hidden">{text}</h1>
 	<RevealText as="p" preset="label" class="hero__eyebrow" text={`> ${site.tagline}`} />
-	<div class="hero__frame" style={`--cols: ${columnsOf(art)}`}>
+	<div
+		class="hero__frame"
+		style={`--cols: ${columnsOf(art)}; --cols-compact: ${columnsOf(artCompact)}`}
+	>
 		<pre
-			class="ascii hero__art"
+			class="ascii hero__art hero__art--wide"
 			data-ascii={`hero-${mode}`}
 			data-ascii-pointer
 			aria-hidden="true">{art}</pre>
+		<pre
+			class="ascii hero__art hero__art--compact"
+			data-ascii={`hero-${mode}`}
+			data-ascii-pointer
+			aria-hidden="true">{artCompact}</pre>
 	</div>
+	<style is:inline set:html={switchCss}></style>
 	{
 		showModeSwitch && (
 			<div class="hero__controls" role="group" aria-label="Wordmark animation" data-hero-controls>
@@ -56,9 +75,11 @@ const modes: Mode[] = ["etch", "decrypt", "scatter"];
 	import { play } from "@/scripts/ascii";
 	import type { PresetName } from "@/scripts/ascii/presets";
 
-	const art = document.querySelector<HTMLElement>(".hero__art");
+	// Both banner variants exist; only the one currently displayed is replayed.
+	const arts = [...document.querySelectorAll<HTMLElement>(".hero__art")];
+	const visibleArt = () => arts.find((el) => el.offsetParent !== null);
 	const controls = document.querySelector<HTMLElement>("[data-hero-controls]");
-	if (art && controls) {
+	if (arts.length && controls) {
 		if (document.documentElement.dataset.motion === "reduced") controls.hidden = true;
 		controls.addEventListener("click", (event) => {
 			const button = (event.target as Element).closest<HTMLButtonElement>("button");
@@ -68,9 +89,12 @@ const modes: Mode[] = ["etch", "decrypt", "scatter"];
 				for (const b of controls.querySelectorAll("[data-hero-mode]")) {
 					b.setAttribute("aria-pressed", String(b === button));
 				}
-				play(art, `hero-${mode}` as PresetName);
+				for (const el of arts) el.dataset.ascii = `hero-${mode}`;
+				const art = visibleArt();
+				if (art) play(art, `hero-${mode}` as PresetName);
 			} else if (button.hasAttribute("data-hero-replay")) {
-				play(art);
+				const art = visibleArt();
+				if (art) play(art);
 			}
 		});
 	}
@@ -91,7 +115,7 @@ const modes: Mode[] = ["etch", "decrypt", "scatter"];
 	/* The banner scales to fit its column count exactly: JetBrains Mono advances 0.6em per glyph,
 	   so font-size = available width / (cols * 0.6). Capped so short names don't get huge. */
 	.hero__frame {
-		container-type: inline-size;
+		container: hero / inline-size;
 	}
 
 	.hero__art {
@@ -101,6 +125,12 @@ const modes: Mode[] = ["etch", "decrypt", "scatter"];
 		max-width: 100%;
 		overflow: hidden;
 		touch-action: pan-y;
+	}
+
+	.hero__art--compact {
+		display: none;
+		font-size: min(1.1rem, calc(100cqi / (var(--cols-compact) * 0.6)));
+		line-height: 0.8;
 	}
 
 	.hero__controls {

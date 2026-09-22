@@ -16,6 +16,7 @@ interface Entry {
 	el: HTMLElement;
 	text: string;
 	animator: Animator;
+	/** performance.now() of the first painted frame; NaN until then (e.g. in a background tab). */
 	startedAt: number;
 	lastDraw: number;
 }
@@ -36,6 +37,8 @@ function tick(now: number): void {
 	for (const entry of running) {
 		if (now - entry.lastDraw < 1000 / entry.animator.fps - 1) continue;
 		entry.lastDraw = now;
+		// Start the clock on the first frame the visitor can actually see.
+		if (Number.isNaN(entry.startedAt)) entry.startedAt = now;
 		const t = clock(entry, now);
 		if (entry.animator.done(t)) {
 			entry.el.textContent = entry.text;
@@ -75,7 +78,7 @@ export function play(el: HTMLElement, preset?: PresetName): void {
 		el,
 		text,
 		animator: new Animator(text, PRESETS[name]),
-		startedAt: performance.now(),
+		startedAt: Number.NaN,
 		lastDraw: -Infinity,
 	};
 	entries.set(el, entry);
@@ -111,6 +114,7 @@ function attachPointer(el: HTMLElement): void {
 	const ripple = (x: number, y: number, radius: number, count: number) => {
 		const entry = entries.get(el);
 		if (!entry || !motionOn()) return;
+		if (Number.isNaN(entry.startedAt)) return;
 		// Keep the animator's clock current so new flicker starts now, not in the past.
 		entry.animator.frame(clock(entry, performance.now()));
 		entry.animator.perturb(cellsNear(entry, x, y, radius, count), RIPPLE);
@@ -154,7 +158,10 @@ export function initAscii(root: ParentNode = document): void {
 			button.hidden = true;
 			continue;
 		}
-		button.setAttribute("aria-pressed", String(html.dataset.motion === "paused"));
+		const paused = html.dataset.motion === "paused";
+		button.setAttribute("aria-pressed", String(paused));
+		const label = button.querySelector("[data-motion-label]");
+		if (label) label.textContent = paused ? "off" : "on";
 		button.addEventListener("click", () =>
 			setMotion(html.dataset.motion === "paused" ? "on" : "paused"),
 		);

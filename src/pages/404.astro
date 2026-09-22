@@ -1,0 +1,35 @@
+---
+import { columnsOf, renderBanner } from "@/scripts/ascii/font";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { path } from "@/lib/url";
+
+const art = renderBanner("404");
+---
+
+<BaseLayout title="Not found" noindex animated canonical="/404/">
+	<section class="container section section--wide lost">
+		<h1 class="visually-hidden">Page not found</h1>
+		<div class="lost__frame" style={`--cols: ${columnsOf(art)}`}>
+			<pre class="ascii lost__art" data-ascii="hero-scatter" data-ascii-pointer aria-hidden="true">{art}</pre>
+		</div>
+		<p class="mono muted lost__msg">?SYNTAX ERROR: no such page.</p>
+		<p class="mono"><a href={path("/")}>cd ~</a></p>
+	</section>
+</BaseLayout>
+
+<style>
+	.lost__frame {
+		container-type: inline-size;
+		max-width: 40rem;
+	}
+
+	.lost__art {
+		font-size: min(1.4rem, calc(100cqi / (var(--cols) * 0.6)));
+		width: max-content;
+		max-width: 100%;
+	}
+
+	.lost__msg {
+		margin-block: var(--space-3) var(--space-2);
+	}
+</style>
