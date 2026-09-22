@@ -62,6 +62,8 @@ export interface SiteLinks {
 	github: string | null;
 	/** FILL IN: full https URL, or leave `null` to show an unconfigured state. */
 	linkedin: string | null;
+	/** FILL IN: full https URL, or leave `null` to show an unconfigured state. */
+	gravatar: string | null;
 	/** FILL IN: e.g. "mailto:you@example.com", or leave `null` to hide it. */
 	contact: string | null;
 	/**
@@ -84,6 +86,7 @@ export const site: SiteConfig = {
 	links: {
 		github: null,
 		linkedin: null,
+		gravatar: "https://gravatar.com/satunix",
 		contact: null,
 		rss: "/rss.xml",
 	},
