@@ -1,0 +1,28 @@
+---
+import EntryList from "@/components/EntryList.astro";
+import SectionHead from "@/components/SectionHead.astro";
+import { engagements, workIntro } from "@/data/work";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const entries = engagements.map((e) => ({ title: e.title, summary: e.summary, items: e.covers }));
+---
+
+<BaseLayout
+	title="Work"
+	description="Representative types of offensive security and security engineering work."
+	animated
+>
+	<section class="container section section--wide">
+		<SectionHead label="ls work/  (types, not clients)" title="Work" />
+		<p class="lede muted">{workIntro}</p>
+		<EntryList entries={entries} itemsLabel="covers" />
+	</section>
+</BaseLayout>
+
+<style>
+	.lede {
+		max-width: var(--measure);
+		margin-bottom: var(--space-4);
+		line-height: 1.65;
+	}
+</style>

@@ -10,10 +10,29 @@ import { path } from "@/lib/url";
 
 const recent = (await getPublishedPosts()).slice(0, 3);
 const keyWidth = Math.max(...profile.facts.map((f) => f.key.length));
+const areas = [
+	{
+		name: "Offensive Security",
+		text: "Penetration testing and adversary simulation across networks, Active Directory, cloud and APIs.",
+		href: path("work/"),
+	},
+	{
+		name: "Security Engineering",
+		text: "The infrastructure behind the testing: C2, telemetry pipelines, GitOps, tooling and platforms.",
+		href: path("work/"),
+	},
+	{
+		name: "AI Systems",
+		text: "Securing autonomous agents, and building constrained agent systems in a private lab.",
+		href: path("projects/"),
+	},
+];
 const routes = [
+	{ cmd: "ls work/", href: path("work/"), note: "representative engagement types" },
+	{ cmd: "ls lab/", href: path("projects/"), note: "personal research and experiments" },
 	{ cmd: "cd writing/", href: path("blog/"), note: "notes, essays and write-ups" },
-	{ cmd: "cat cv.txt", href: path("cv/"), note: "experience and qualifications" },
-	{ cmd: "ls links/", href: path("links/"), note: "profiles, contact and public key" },
+	{ cmd: "cat cv.txt", href: path("cv/"), note: "roles, capabilities, certifications" },
+	{ cmd: "ls links/", href: path("links/"), note: "GitHub, Gravatar and feed" },
 ];
 ---
 
@@ -53,14 +72,33 @@ const routes = [
 		</div>
 	</section>
 
+	<section class="container section" aria-labelledby="areas">
+		<SectionHead index="02" label="scope" title="Security. Systems. Software." id="areas" />
+		<ol class="areas" role="list">
+			{
+				areas.map((area, i) => (
+					<li class="area">
+						<p class="meta">{`0${i + 1}`}</p>
+						<h3 class="area__name">
+							<a href={area.href}>
+								<RevealText preset="title" text={area.name} />
+							</a>
+						</h3>
+						<p class="area__text muted">{area.text}</p>
+					</li>
+				))
+			}
+		</ol>
+	</section>
+
 	<section class="container section" aria-labelledby="writing">
-		<SectionHead index="02" label="writing" title="Recent writing" id="writing" />
-		<PostList posts={recent} />
+		<SectionHead index="03" label="writing" title="Recent writing" id="writing" />
+		<PostList posts={recent} emptyLabel="First posts are in draft. Check back soon." />
 		<p class="more mono"><a href={path("blog/")}>ls writing/ --all</a></p>
 	</section>
 
 	<section class="container section section--wide" aria-labelledby="elsewhere">
-		<SectionHead index="03" label="index" title="Find your way around" id="elsewhere" />
+		<SectionHead index="04" label="index" title="Find your way around" id="elsewhere" />
 		<ul class="routes" role="list">
 			{
 				routes.map((r) => (
@@ -83,6 +121,33 @@ const routes = [
 		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
 		gap: var(--space-4);
 		align-items: start;
+	}
+
+	.areas {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: var(--space-4) var(--space-3);
+	}
+
+	.area__name {
+		font-size: var(--step-2);
+		margin-block: var(--space-1);
+	}
+
+	.area__name a {
+		color: var(--color-fg);
+	}
+
+	.area__name a:hover {
+		color: var(--color-accent);
+		text-decoration: none;
+	}
+
+	.area__text {
+		line-height: 1.6;
 	}
 
 	.readout {

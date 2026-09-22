@@ -10,6 +10,6 @@ const posts = await getPublishedPosts();
 <BaseLayout title="Writing" description="Posts, newest first." animated>
 	<section class="container section section--wide">
 		<SectionHead label={`ls writing/  (${posts.length} entries)`} title="Writing" />
-		<PostList posts={posts} />
+		<PostList posts={posts} emptyLabel="First posts are in draft. Check back soon." />
 	</section>
 </BaseLayout>

@@ -1,0 +1,127 @@
+---
+// Numbered entries: mono index + status on the left, title, summary and a compact
+// "covers" list on the right. Used by /work/ and /projects/.
+import RevealText from "@/components/RevealText.astro";
+
+export interface Entry {
+	title: string;
+	tagline?: string;
+	status?: string;
+	summary: string;
+	items: string[];
+	href?: string;
+}
+
+interface Props {
+	entries: Entry[];
+	/** Label for the item list, e.g. "covers" or "themes". */
+	itemsLabel: string;
+}
+
+const { entries, itemsLabel } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, "0");
+---
+
+<ol class="entries" role="list">
+	{
+		entries.map((entry, i) => (
+			<li class="entry">
+				<p class="entry__index meta">
+					<RevealText preset="meta" text={pad(i + 1)} />
+					{entry.status && <span class="entry__status">{entry.status}</span>}
+				</p>
+				<div class="entry__body">
+					<h2 class="entry__title">
+						<RevealText preset="title" text={entry.title} />
+					</h2>
+					{entry.tagline && <p class="entry__tagline mono">{entry.tagline}</p>}
+					<p class="entry__summary">{entry.summary}</p>
+					<p class="entry__items meta">
+						<span class="entry__items-label">{itemsLabel}:</span> {entry.items.join(" / ")}
+					</p>
+					{entry.href && (
+						<p class="entry__link mono">
+							<a href={entry.href} rel="noopener">
+								{entry.href.replace(/^https?:\/\//, "")}
+							</a>
+						</p>
+					)}
+				</div>
+			</li>
+		))
+	}
+</ol>
+
+<style>
+	.entries {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: var(--space-4);
+	}
+
+	.entry {
+		display: grid;
+		grid-template-columns: 11ch 1fr;
+		gap: var(--space-1) var(--space-3);
+	}
+
+	.entry__index {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25em;
+		padding-top: 0.5em;
+	}
+
+	.entry__status {
+		color: var(--color-fg-muted);
+		opacity: 0.75;
+	}
+
+	.entry__body {
+		max-width: var(--measure);
+	}
+
+	.entry__title {
+		font-size: var(--step-2);
+		line-height: 1.15;
+	}
+
+	.entry__tagline {
+		margin-top: var(--space-1);
+		font-size: var(--step--1);
+		color: var(--color-fg-muted);
+	}
+
+	.entry__summary {
+		margin-top: var(--space-2);
+		line-height: 1.65;
+	}
+
+	.entry__items {
+		margin-top: var(--space-2);
+		line-height: 1.7;
+	}
+
+	.entry__items-label {
+		color: var(--color-fg);
+	}
+
+	.entry__link {
+		margin-top: var(--space-1);
+		font-size: var(--step--1);
+	}
+
+	@media (max-width: 40rem) {
+		.entry {
+			grid-template-columns: 1fr;
+		}
+
+		.entry__index {
+			flex-direction: row;
+			gap: 2ch;
+			padding-top: 0;
+		}
+	}
+</style>

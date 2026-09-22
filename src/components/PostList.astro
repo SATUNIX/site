@@ -33,6 +33,7 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 								<RevealText text={post.data.title} preset="title" />
 							</a>
 						</h3>
+						{post.data.draft && <p class="post-list__draft meta">[ draft: dev preview only ]</p>}
 						<p class="post-list__desc muted">{post.data.description}</p>
 					</div>
 				</li>
@@ -71,6 +72,11 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 	.post-list__title a:hover {
 		color: var(--color-accent);
 		text-decoration: none;
+	}
+
+	.post-list__draft {
+		color: var(--color-accent);
+		margin-top: 0.25em;
 	}
 
 	.post-list__desc {

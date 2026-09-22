@@ -1,6 +1,5 @@
 ---
-// External profiles, contact and the OpenPGP key. Unset links render as an explicit
-// unconfigured state rather than a dead or guessed URL.
+// External profiles and the OpenPGP key. Links that are not set are simply not listed.
 import RevealText from "@/components/RevealText.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import { site } from "@/config/site";
@@ -8,13 +7,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { fingerprint, formatFingerprint, isPgpConfigured } from "@/lib/pgp";
 import { asset, path } from "@/lib/url";
 
+// Only links that exist are listed; a `null` in site config leaves that row off entirely.
 const entries = [
 	{ key: "github", href: site.links.github },
 	{ key: "linkedin", href: site.links.linkedin },
 	{ key: "gravatar", href: site.links.gravatar },
 	{ key: "contact", href: site.links.contact },
 	{ key: "rss", href: path(site.links.rss) },
-];
+].filter((entry): entry is { key: string; href: string } => entry.href !== null);
 const display = (href: string) => href.replace(/^mailto:/, "").replace(/^https?:\/\//, "");
 const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
 ---
@@ -28,13 +28,9 @@ const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
 					<div class="links__row">
 						<dt class="meta">{entry.key}</dt>
 						<dd>
-							{entry.href ? (
-								<a href={entry.href} rel={entry.href.startsWith("http") ? "me noopener" : undefined}>
-									<RevealText preset="label" text={display(entry.href)} />
-								</a>
-							) : (
-								<span class="unconfigured">not configured</span>
-							)}
+							<a href={entry.href} rel={entry.href.startsWith("http") ? "me noopener" : undefined}>
+								<RevealText preset="label" text={display(entry.href)} />
+							</a>
 						</dd>
 					</div>
 				))

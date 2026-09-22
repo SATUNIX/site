@@ -18,6 +18,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 					<p class="unconfigured">Summary not written yet: edit src/data/cv.ts.</p>
 				)
 			}
+			{cv.note && <p class="cv__note meta">{cv.note}</p>}
 		</header>
 
 		<section class="cv__section" aria-labelledby="cv-exp">
@@ -32,7 +33,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 								<p class="meta cv__period">{role.period}</p>
 								<div>
 									<h3 class="cv__role">
-										{role.title} <span class="muted">/ {role.org}</span>
+										{role.title}
+										{role.org && <span class="muted"> / {role.org}</span>}
 									</h3>
 									{role.points.length > 0 && (
 										<ul class="cv__points">
@@ -49,19 +51,24 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			}
 		</section>
 
+		<section class="cv__section" aria-labelledby="cv-cap">
+			<h2 id="cv-cap" class="cv__label">Capabilities</h2>
+			<ul class="cv__caps">
+				{cv.capabilities.map((c) => <li>{c}</li>)}
+			</ul>
+		</section>
+
 		<section class="cv__section" aria-labelledby="cv-qual">
-			<h2 id="cv-qual" class="cv__label">Qualifications</h2>
+			<h2 id="cv-qual" class="cv__label">Credentials</h2>
 			{
 				cv.qualifications.length === 0 ? (
-					<p class="unconfigured">No qualifications added yet.</p>
+					<p class="unconfigured">No credentials added yet.</p>
 				) : (
 					<ol class="cv__list" role="list">
 						{cv.qualifications.map((q) => (
 							<li class="cv__item">
-								<p class="meta cv__period">{q.year}</p>
-								<h3 class="cv__role">
-									{q.name} <span class="muted">/ {q.issuer}</span>
-								</h3>
+								<p class="meta cv__period">{q.status}</p>
+								<h3 class="cv__role">{q.name}</h3>
 							</li>
 						))}
 					</ol>
@@ -107,8 +114,24 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		max-width: var(--measure);
 	}
 
+	.cv__note {
+		margin-top: var(--space-2);
+	}
+
 	.cv__section {
 		margin-top: var(--space-5);
+	}
+
+	.cv__caps {
+		margin: 0;
+		padding-left: 1.25em;
+		columns: 2 22rem;
+		column-gap: var(--space-4);
+	}
+
+	.cv__caps li {
+		break-inside: avoid;
+		padding-block: 0.2em;
 	}
 
 	.cv__label {
@@ -129,7 +152,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 	.cv__item {
 		display: grid;
-		grid-template-columns: 14ch 1fr;
+		grid-template-columns: 18ch 1fr;
 		gap: var(--space-1) var(--space-3);
 		padding-block: var(--space-2);
 		break-inside: avoid;

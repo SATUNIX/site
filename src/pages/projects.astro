@@ -1,0 +1,53 @@
+---
+import EntryList from "@/components/EntryList.astro";
+import SectionHead from "@/components/SectionHead.astro";
+import { site } from "@/config/site";
+import { projects, projectsIntro } from "@/data/projects";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+
+const entries = projects.map((p) => ({
+	title: p.title,
+	tagline: p.tagline,
+	status: p.status,
+	summary: p.summary,
+	items: p.themes,
+	href: p.href,
+}));
+---
+
+<BaseLayout
+	title="Projects"
+	description="Personal research and experiments: agent security, autonomous systems and private AI infrastructure."
+	animated
+>
+	<section class="container section section--wide">
+		<SectionHead label="ls lab/  (personal research)" title="Projects" />
+		<div class="lede muted">
+			{projectsIntro.map((para) => <p>{para}</p>)}
+			{
+				site.links.github && (
+					<p class="mono">
+						<a href={site.links.github} rel="me noopener">
+							{site.links.github.replace(/^https?:\/\//, "")}
+						</a>
+					</p>
+				)
+			}
+		</div>
+		<EntryList entries={entries} itemsLabel="themes" />
+	</section>
+</BaseLayout>
+
+<style>
+	.lede {
+		max-width: var(--measure);
+		margin-bottom: var(--space-4);
+		line-height: 1.65;
+		display: grid;
+		gap: var(--space-2);
+	}
+
+	.lede .mono {
+		font-size: var(--step--1);
+	}
+</style>

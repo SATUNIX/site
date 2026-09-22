@@ -3,10 +3,12 @@
 A personal site: dark, minimal and editorial, with animated ASCII type. It's built with
 [Astro](https://astro.build) as a fully static site and deployed to GitHub Pages.
 
-- **Home**: an ASCII wordmark generated from your name, a key-info readout, recent writing
+- **Home**: an ASCII wordmark, intro, key-info readout, scope, recent writing
+- **Work**: representative engagement types (types of work, never specific clients)
+- **Projects**: personal research and experiments from the private lab
 - **Writing**: Markdown posts with RSS, sitemap and code highlighting
-- **CV**: structured experience, qualifications and skills, with a clean print stylesheet
-- **Links**: profiles, contact, and an OpenPGP key with a fingerprint derived at build time
+- **CV**: roles, capabilities, credentials and skills, with a clean print stylesheet
+- **Links**: GitHub, Gravatar, feed, and an OpenPGP key (fingerprint derived at build time)
 
 No framework runtime, no CSS framework, no backend. The animation engine is about 3.4 KB of
 gzipped JS and loads only on pages that use it. Articles and the CV ship no JavaScript.
@@ -28,23 +30,34 @@ Requires Node 22.11+ (`.nvmrc` pins 26).
 `check:site` enforces printable-ASCII-only source, base-path-safe URLs, and the expected
 build output.
 
-## Make it yours
+## Where the content lives
 
-Nothing personal is invented. Unset values render as an explicit "unset" or "not
-configured" state until you fill them in.
+Content is kept apart from presentation. Edit these, not the pages:
 
-| File | What to fill in |
+| File | Content |
 | --- | --- |
-| `src/config/site.ts` | name, tagline, description, author, GitHub/LinkedIn/contact links, `isConfigured` |
-| `src/data/profile.ts` | homepage intro paragraphs and the key-info readout (role, based, focus, ...) |
-| `src/data/cv.ts` | summary, experience, qualifications, skills |
-| `public/keys/public.asc` | your OpenPGP public key, then set `pgpKeyPath: "keys/public.asc"` |
-| `src/content/blog/*.md` | posts. The `sample-*` posts are placeholders, so delete them |
+| `src/config/site.ts` | name, tagline, description, links (`null` leaves a link off the site) |
+| `src/data/profile.ts` | homepage intro and key-info readout |
+| `src/data/work.ts` | representative engagement types for /work/ |
+| `src/data/projects.ts` | research and experiments for /projects/ |
+| `src/data/cv.ts` | summary, roles, capabilities, credentials, skills |
+| `src/content/blog/*.md` | posts (all current posts are drafts: `draft: true`) |
+| `public/keys/public.asc` | optional OpenPGP public key, then set `pgpKeyPath: "keys/public.asc"` |
+
+Work entries describe types of work repeated across many engagements. Keep them that way:
+no client names, sectors, architectures or findings.
+
+### Drafts
+
+The posts in `src/content/blog/` are scaffolds with `[TODO]` markers. They show in
+`npm run dev` (marked `[ draft ]`) and are excluded from production builds, RSS and the
+sitemap. To publish one, fill in the TODOs, set a real `pubDate`, and set `draft: false`.
+Find what's left with `grep -rn TODO src/content/blog`.
 
 The wordmark is generated from `site.name` at build time (`src/scripts/ascii/font.ts`,
 letters A-Z, digits, `-`, `.` and `'`). Each word goes on its own line.
 
-### Writing a post
+### Writing a new post
 
 Add `src/content/blog/my-post.md`:
 

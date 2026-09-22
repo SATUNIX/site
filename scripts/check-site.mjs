@@ -48,6 +48,8 @@ const EXPECTED_ROUTES = [
 	"blog/index.html",
 	"cv/index.html",
 	"links/index.html",
+	"work/index.html",
+	"projects/index.html",
 	"404.html",
 	"rss.xml",
 	"sitemap-index.xml",

@@ -60,11 +60,11 @@ export interface SiteConfig {
 export interface SiteLinks {
 	/** FILL IN: full https URL, or leave `null` to show an unconfigured state. */
 	github: string | null;
-	/** FILL IN: full https URL, or leave `null` to show an unconfigured state. */
+	/** Full https URL, or `null` to leave it off the site. */
 	linkedin: string | null;
 	/** FILL IN: full https URL, or leave `null` to show an unconfigured state. */
 	gravatar: string | null;
-	/** FILL IN: e.g. "mailto:you@example.com", or leave `null` to hide it. */
+	/** e.g. "mailto:you@example.com", or `null` to leave it off the site. */
 	contact: string | null;
 	/**
 	 * Feed path relative to the site root. Leave as-is; components run it through the
@@ -75,21 +75,22 @@ export interface SiteLinks {
 }
 
 export const site: SiteConfig = {
-	name: "PLACEHOLDER NAME",
-	tagline: "PLACEHOLDER TAGLINE",
-	description: "PLACEHOLDER DESCRIPTION",
+	name: "Tony",
+	tagline: "Security. Systems. Software.",
+	description:
+		"Tony: offensive security and security engineering, working across penetration testing, adversary simulation, cloud infrastructure and autonomous AI systems.",
 	// GitHub Pages project site for the SATUNIX/site repository. For a custom domain (or a
 	// <user>.github.io repository) set url to that origin and base to "".
 	url: "https://satunix.github.io",
 	base: "/site/",
-	author: "PLACEHOLDER AUTHOR",
+	author: "Tony",
 	links: {
-		github: null,
+		github: "https://github.com/satunix",
 		linkedin: null,
 		gravatar: "https://gravatar.com/satunix",
 		contact: null,
 		rss: "/rss.xml",
 	},
 	pgpKeyPath: null,
-	isConfigured: false,
+	isConfigured: true,
 };
