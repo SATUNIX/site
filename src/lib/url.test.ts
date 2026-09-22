@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { site } from "@/config/site";
+
 import {
 	absolute,
 	asset,
@@ -8,6 +10,9 @@ import {
 	normalizeBase,
 	path,
 } from "./url";
+
+// Whatever origin src/config/site.ts is set to (the URL API normalises and lowercases it).
+const origin = new URL(site.url).origin;
 
 afterEach(() => {
 	vi.unstubAllEnvs();
@@ -65,13 +70,12 @@ describe("base-path-safe helpers", () => {
 		expect(path("/")).toBe("/repo/");
 		expect(path("blog/")).toBe("/repo/blog/");
 		expect(asset("keys/public.asc")).toBe("/repo/keys/public.asc");
-		expect(absolute("blog/")).toBe("https://placeholder.example/repo/blog/");
+		expect(absolute("blog/")).toBe(`${origin}/repo/blog/`);
 	});
 
 	it("builds absolute URLs against the configured origin", () => {
 		vi.stubEnv("BASE_URL", "/");
-		// The URL API lowercases the host, hence the lowercase placeholder domain here.
-		expect(absolute("/")).toBe("https://placeholder.example/");
-		expect(absolute("blog/")).toBe("https://placeholder.example/blog/");
+		expect(absolute("/")).toBe(`${origin}/`);
+		expect(absolute("blog/")).toBe(`${origin}/blog/`);
 	});
 });

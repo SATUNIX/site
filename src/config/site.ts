@@ -76,8 +76,10 @@ export const site: SiteConfig = {
 	name: "PLACEHOLDER NAME",
 	tagline: "PLACEHOLDER TAGLINE",
 	description: "PLACEHOLDER DESCRIPTION",
-	url: "https://PLACEHOLDER.example",
-	base: "",
+	// GitHub Pages project site for the SATUNIX/site repository. For a custom domain (or a
+	// <user>.github.io repository) set url to that origin and base to "".
+	url: "https://satunix.github.io",
+	base: "/site/",
 	author: "PLACEHOLDER AUTHOR",
 	links: {
 		github: null,
