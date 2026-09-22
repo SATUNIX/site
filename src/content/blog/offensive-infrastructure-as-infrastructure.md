@@ -3,10 +3,9 @@ title: "Building offensive infrastructure as infrastructure"
 description: "C2, telemetry, test environments and deployment pipelines deserve the same engineering discipline as production systems."
 pubDate: 2026-09-23
 tags: [offensive-security, engineering, infrastructure]
-draft: true
+draft: false
+wip: true
 ---
-
-> DRAFT: outline and working notes. Not for publication yet. Generic, no engagement detail.
 
 Offensive tooling is often built fast and thrown away. That works until you need to rebuild
 it under time pressure, prove what it did, or hand it to someone else. Treating it as real

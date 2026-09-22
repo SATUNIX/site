@@ -6,7 +6,8 @@ import { getPublishedPosts } from "@/lib/posts";
 import { absolute } from "@/lib/url";
 
 export async function GET(_context: APIContext) {
-	const posts = await getPublishedPosts();
+	// Work-in-progress posts join the feed once they are finished.
+	const posts = (await getPublishedPosts()).filter((post) => !post.data.wip);
 	return rss({
 		title: site.name,
 		description: site.description,

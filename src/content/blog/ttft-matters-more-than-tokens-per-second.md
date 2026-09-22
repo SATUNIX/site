@@ -3,10 +3,9 @@ title: "TTFT is often more important than tokens per second"
 description: "For interactive and agent workloads, waiting for the first token shapes the experience more than raw generation speed."
 pubDate: 2026-09-23
 tags: [local-ai, infrastructure, agents]
-draft: true
+draft: false
+wip: true
 ---
-
-> DRAFT: scaffold only. Measurements to come from real benchmarks.
 
 Inference benchmarks love tokens per second. For interactive use, and especially for agents
 that make many short calls, the number that dominates is how long you wait before anything

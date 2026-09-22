@@ -3,11 +3,9 @@ title: "Running 27B models on constrained hardware"
 description: "Quantisation, the VRAM/RAM split, context size and throughput: lessons from running mid-size models on hardware that is not built for it."
 pubDate: 2026-09-23
 tags: [local-ai, infrastructure]
-draft: true
+draft: false
+wip: true
 ---
-
-> DRAFT: scaffold only. All measurements to be filled in from real runs. Do not publish with
-> placeholder numbers.
 
 A 27B-parameter model is big enough to be genuinely useful for agent work and small enough to
 tempt you into running it on hardware that was never meant for it. This is what that looks

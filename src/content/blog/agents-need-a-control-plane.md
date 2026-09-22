@@ -3,10 +3,9 @@ title: "Agents need a control plane, not just a system prompt"
 description: "A system prompt is a request, not a boundary. Tool-using agents need enforcement that sits outside the model."
 pubDate: 2026-09-23
 tags: [ai-security, agents]
-draft: true
+draft: false
+wip: true
 ---
-
-> DRAFT: outline and working notes. Not for publication yet.
 
 A system prompt tells an agent what it should do. It does not decide what the agent *can* do.
 As soon as an agent holds real tools (a shell, a cloud API, a browser, someone's inbox) the gap

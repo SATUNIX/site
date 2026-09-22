@@ -12,7 +12,10 @@ const blog = defineCollection({
 		pubDate: z.coerce.date(),
 		updatedDate: z.coerce.date().optional(),
 		tags: z.array(z.string()).default([]),
+		// draft: dev preview only, never built for production.
 		draft: z.boolean().default(false),
+		// wip: published, but clearly labelled as a draft, noindexed and kept out of RSS.
+		wip: z.boolean().default(false),
 	}),
 });
 

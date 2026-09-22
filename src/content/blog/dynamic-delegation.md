@@ -3,10 +3,9 @@ title: "Dynamic delegation: letting agent topology follow the problem"
 description: "Fixed multi-agent org charts may be the wrong abstraction. What if structure formed around each task instead?"
 pubDate: 2026-09-23
 tags: [agents, research, soar]
-draft: true
+draft: false
+wip: true
 ---
-
-> DRAFT: outline and working notes. Not for publication yet.
 
 Most multi-agent systems start with an org chart: a planner, a coder, a reviewer, a tester.
 The structure is decided before the problem is known. SOAR starts from the opposite end: give

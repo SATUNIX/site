@@ -3,10 +3,9 @@ title: "Designing cyber agents that know their rules of engagement"
 description: "Scope should be enforceable machine state, not prose buried in a prompt."
 pubDate: 2026-09-23
 tags: [ai-security, pentesting, agents]
-draft: true
+draft: false
+wip: true
 ---
-
-> DRAFT: outline and working notes. Not for publication yet.
 
 Human testers work inside a signed scope and rules of engagement. An agent doing security work
 needs the same, and "please only test these hosts" in a prompt is not it.

@@ -41,17 +41,21 @@ Content is kept apart from presentation. Edit these, not the pages:
 | `src/data/work.ts` | representative engagement types for /work/ |
 | `src/data/projects.ts` | research and experiments for /projects/ |
 | `src/data/cv.ts` | summary, roles, capabilities, credentials, skills |
-| `src/content/blog/*.md` | posts (all current posts are drafts: `draft: true`) |
+| `src/content/blog/*.md` | posts (current posts are `wip: true` scaffolds, see below) |
 | `public/keys/public.asc` | optional OpenPGP public key, then set `pgpKeyPath: "keys/public.asc"` |
 
 Work entries describe types of work repeated across many engagements. Keep them that way:
 no client names, sectors, architectures or findings.
 
-### Drafts
+### Drafts and work in progress
 
-The posts in `src/content/blog/` are scaffolds with `[TODO]` markers. They show in
-`npm run dev` (marked `[ draft ]`) and are excluded from production builds, RSS and the
-sitemap. To publish one, fill in the TODOs, set a real `pubDate`, and set `draft: false`.
+Two front-matter flags control publishing:
+
+- `draft: true`: dev preview only (`npm run dev`). Never built for production.
+- `wip: true`: published, but labelled `[ draft ]` in lists and on the page, `noindex`ed, and
+  kept out of RSS. The current posts are all `wip` scaffolds with `[TODO]` markers.
+
+To finish a post: fill in the TODOs, set a real `pubDate`, and remove `wip: true`.
 Find what's left with `grep -rn TODO src/content/blog`.
 
 The wordmark is generated from `site.name` at build time (`src/scripts/ascii/font.ts`,

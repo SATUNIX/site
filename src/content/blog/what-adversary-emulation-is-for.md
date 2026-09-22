@@ -3,10 +3,9 @@ title: "What adversary emulation is actually for"
 description: "Not a trophy hunt. Attack-path discovery, telemetry, visibility gaps and proving that detections and playbooks work."
 pubDate: 2026-09-23
 tags: [offensive-security, adversary-simulation]
-draft: true
+draft: false
+wip: true
 ---
-
-> DRAFT: outline and working notes. Not for publication yet.
 
 Adversary emulation is easy to misread as "red team gets domain admin, writes report". The
 access is the least interesting output. The value is in what the exercise reveals about how an

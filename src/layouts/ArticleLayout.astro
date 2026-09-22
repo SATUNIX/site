@@ -10,15 +10,32 @@ interface Props {
 	updatedDate?: Date;
 	tags?: string[];
 	backHref?: string;
+	/** Published work in progress: labelled on the page and kept out of search indexes. */
+	wip?: boolean;
 }
 
-const { title, description, pubDate, updatedDate, tags = [], backHref = path("blog/") } =
-	Astro.props;
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	tags = [],
+	backHref = path("blog/"),
+	wip = false,
+} = Astro.props;
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={wip ? `Draft: ${title}` : title} description={description} noindex={wip}>
 	<article class="container article">
+		{
+			wip && (
+				<p class="article__wip mono" role="note">
+					[ draft ] Work in progress: an outline with working notes. The finished post will
+					replace it.
+				</p>
+			)
+		}
 		<header class="article__head">
 			<p class="meta">
 				<time datetime={pubDate.toISOString()}>{iso(pubDate)}</time>
@@ -44,6 +61,13 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 <style>
 	.article {
 		padding-block: var(--space-4) var(--space-5);
+	}
+
+	.article__wip {
+		max-width: var(--measure);
+		margin-bottom: var(--space-3);
+		font-size: var(--step--1);
+		color: var(--color-accent);
 	}
 
 	.article__head {

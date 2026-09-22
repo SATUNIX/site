@@ -3,10 +3,9 @@ title: "The approval came after the action"
 description: "An agent changed a file before the approval prompt said it was allowed to. Why UI-level approvals are not enforcement."
 pubDate: 2026-09-23
 tags: [ai-security, agents]
-draft: true
+draft: false
+wip: true
 ---
-
-> DRAFT: outline and working notes. Not for publication yet.
 
 While testing an approval gate for a tool-using agent, the order of events came out wrong: the
 file had already changed by the time the approval prompt appeared. The user was being asked
