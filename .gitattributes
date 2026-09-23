@@ -1,0 +1,9 @@
+# Normalise line endings; the site checks require plain LF text.
+* text=auto eol=lf
+
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.ico binary
+
+package-lock.json linguist-generated=true -diff
