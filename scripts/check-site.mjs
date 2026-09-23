@@ -52,6 +52,15 @@ const EXPECTED_ROUTES = [
 	"projects/index.html",
 	"404.html",
 	"rss.xml",
+	"robots.txt",
+	"llms.txt",
+	"llms-full.txt",
+	"index.md",
+	"work.md",
+	"projects.md",
+	"cv.md",
+	"links.md",
+	"blog.md",
 	"sitemap-index.xml",
 ];
 

@@ -12,6 +12,7 @@ import MotionState from "@/components/MotionState.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import { site } from "@/config/site";
+import { markdownPath } from "@/lib/markdown";
 import { absolute, asset, basePath, path } from "@/lib/url";
 
 interface Props {
@@ -22,6 +23,8 @@ interface Props {
 	noindex?: boolean;
 	animated?: boolean;
 	bodyClass?: string;
+	/** Advertise this page's Markdown twin (/<page>.md). Off for pages without one (404). */
+	markdown?: boolean;
 }
 
 const {
@@ -31,6 +34,7 @@ const {
 	noindex = false,
 	animated = false,
 	bodyClass = "",
+	markdown = true,
 } = Astro.props;
 
 const fullTitle = title ? `${title} | ${site.name}` : site.name;
@@ -53,6 +57,8 @@ const canonicalPath =
 		{noindex && <meta name="robots" content="noindex" />}
 		<link rel="icon" href={asset("favicon.svg")} type="image/svg+xml" />
 		<link rel="alternate" type="application/rss+xml" title={site.name} href={path(site.links.rss)} />
+		{markdown && <link rel="alternate" type="text/markdown" href={path(markdownPath(canonicalPath))} />}
+		<link rel="help" type="text/plain" href={path("llms.txt")} title="llms.txt" />
 		<meta property="og:title" content={fullTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />

@@ -4,11 +4,11 @@ import { site } from "@/config/site";
 import { path } from "@/lib/url";
 
 const nav = [
-	{ href: path("blog/"), label: "Writing", match: "blog/" },
-	{ href: path("work/"), label: "Work", match: "work/" },
-	{ href: path("projects/"), label: "Projects", match: "projects/" },
-	{ href: path("cv/"), label: "CV", match: "cv/" },
-	{ href: path("links/"), label: "Links", match: "links/" },
+	{ href: path("blog/"), label: "writing", match: "blog/" },
+	{ href: path("work/"), label: "work", match: "work/" },
+	{ href: path("projects/"), label: "projects", match: "projects/" },
+	{ href: path("cv/"), label: "cv", match: "cv/" },
+	{ href: path("links/"), label: "links", match: "links/" },
 ];
 const here = Astro.url.pathname;
 ---
@@ -20,7 +20,9 @@ const here = Astro.url.pathname;
 			{
 				nav.map((item) => (
 					<a href={item.href} aria-current={here.includes(item.match) ? "page" : undefined}>
+						<span aria-hidden="true">[ </span>
 						{item.label}
+						<span aria-hidden="true"> ]</span>
 					</a>
 				))
 			}

@@ -1,26 +1,18 @@
 ---
-// Homepage wordmark: the site name rendered as a shaded ASCII banner at build time, animated
-// by the ASCII runtime. The real name is the (visually hidden) h1; the art is aria-hidden.
-//
-// The mode switch is a prototype control for choosing between the three entrances. Once one is
-// chosen, set `mode` and pass `showModeSwitch={false}` (or delete the controls block).
+// Homepage wordmark: the site name rendered as a shaded ASCII banner at build time and etched
+// in by the ASCII runtime. The real name is the (visually hidden) h1; the art is aria-hidden.
 import RevealText from "@/components/RevealText.astro";
 import { site } from "@/config/site";
 import { columnsOf, renderBanner } from "@/scripts/ascii/font";
 
-type Mode = "etch" | "decrypt" | "scatter";
-
 interface Props {
 	text?: string;
-	mode?: Mode;
-	showModeSwitch?: boolean;
 }
 
-const { text = site.name, mode = "etch", showModeSwitch = true } = Astro.props;
+const { text = site.name } = Astro.props;
 const art = renderBanner(text);
 // Narrow screens get a half-width version (one character per pixel) so the name stays legible.
 const artCompact = renderBanner(text, { pixelWidth: 1 });
-const modes: Mode[] = ["etch", "decrypt", "scatter"];
 // Swap to the compact banner where the wide one would render below 7px type
 // (JetBrains Mono advances 0.6em per glyph). Depends on the name, so it is computed here.
 const switchAt = Math.ceil(columnsOf(art) * 0.6 * 7);
@@ -40,65 +32,17 @@ const switchCss = `@container hero (max-width: ${switchAt}px) {
 	>
 		<pre
 			class="ascii hero__art hero__art--wide"
-			data-ascii={`hero-${mode}`}
+			data-ascii="hero-etch"
 			data-ascii-pointer
 			aria-hidden="true">{art}</pre>
 		<pre
 			class="ascii hero__art hero__art--compact"
-			data-ascii={`hero-${mode}`}
+			data-ascii="hero-etch"
 			data-ascii-pointer
 			aria-hidden="true">{artCompact}</pre>
 	</div>
 	<style is:inline set:html={switchCss}></style>
-	{
-		showModeSwitch && (
-			<div class="hero__controls" role="group" aria-label="Wordmark animation" data-hero-controls>
-				{modes.map((m) => (
-					<button
-						class="text-button"
-						type="button"
-						data-hero-mode={m}
-						aria-pressed={m === mode ? "true" : "false"}
-					>
-						[ {m} ]
-					</button>
-				))}
-				<button class="text-button" type="button" data-hero-replay>
-					[ replay ]
-				</button>
-			</div>
-		)
-	}
 </section>
-
-<script>
-	import { play } from "@/scripts/ascii";
-	import type { PresetName } from "@/scripts/ascii/presets";
-
-	// Both banner variants exist; only the one currently displayed is replayed.
-	const arts = [...document.querySelectorAll<HTMLElement>(".hero__art")];
-	const visibleArt = () => arts.find((el) => el.offsetParent !== null);
-	const controls = document.querySelector<HTMLElement>("[data-hero-controls]");
-	if (arts.length && controls) {
-		if (document.documentElement.dataset.motion === "reduced") controls.hidden = true;
-		controls.addEventListener("click", (event) => {
-			const button = (event.target as Element).closest<HTMLButtonElement>("button");
-			if (!button) return;
-			const mode = button.dataset.heroMode;
-			if (mode) {
-				for (const b of controls.querySelectorAll("[data-hero-mode]")) {
-					b.setAttribute("aria-pressed", String(b === button));
-				}
-				for (const el of arts) el.dataset.ascii = `hero-${mode}`;
-				const art = visibleArt();
-				if (art) play(art, `hero-${mode}` as PresetName);
-			} else if (button.hasAttribute("data-hero-replay")) {
-				const art = visibleArt();
-				if (art) play(art);
-			}
-		});
-	}
-</script>
 
 <style>
 	.hero {
@@ -131,12 +75,5 @@ const switchCss = `@container hero (max-width: ${switchAt}px) {
 		display: none;
 		font-size: min(1.1rem, calc(100cqi / (var(--cols-compact) * 0.6)));
 		line-height: 0.8;
-	}
-
-	.hero__controls {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2);
-		margin-top: var(--space-2);
 	}
 </style>

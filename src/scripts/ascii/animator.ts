@@ -12,10 +12,21 @@ import { pick, sample, sampleInt, type RangeLike, type Rng } from "./random";
 export type Reveal =
 	/** Type left-to-right, a random batch of characters per frame. */
 	| { kind: "type"; charsPerFrame: RangeLike }
-	/** Reveal whole lines, `linesPerFrame` at a time. */
-	| { kind: "lines"; linesPerFrame: number }
-	/** Reveal characters in shuffled order: glyphs appear scattered across the block. */
-	| { kind: "scatter"; charsPerFrame: RangeLike }
+	/**
+	 * Type left-to-right with a band of scrambled glyphs running ahead of the typing head (in the
+	 * spirit of GSAP's ScrambleText). Noise keeps each character's class: lowercase stays
+	 * lowercase, digits stay digits, spaces stay spaces, so word shapes hold while they resolve.
+	 */
+	| {
+			kind: "scramble";
+			charsPerFrame: RangeLike;
+			/** Characters of noise ahead of the head. */
+			window: number;
+			/** Seconds between noise re-rolls (lower = busier). */
+			interval: number;
+			/** Glyph drawn at the typing head, e.g. "_". */
+			cursor?: string;
+	  }
 	/** A diagonal wavefront sweeps across the grid, trailing noise glyphs behind it. */
 	| { kind: "etch"; colsPerSecond: number; slant: number; trail: number; noise: string }
 	/** Everything is visible immediately (cycles only). */
@@ -60,6 +71,19 @@ interface Cycle {
 
 const isBlank = (ch: string) => ch === " " || ch === "\n";
 
+const LOWER = "abcdefghijklmnopqrstuvwxyz";
+const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const DIGITS = "0123456789";
+const SYMBOLS = "#%*+=-:./";
+
+/** Noise pool that matches a character's class. */
+function poolFor(ch: string): string {
+	if (ch >= "a" && ch <= "z") return LOWER;
+	if (ch >= "A" && ch <= "Z") return UPPER;
+	if (ch >= "0" && ch <= "9") return DIGITS;
+	return SYMBOLS;
+}
+
 export class Animator {
 	readonly text: string;
 	readonly fps: number;
@@ -70,6 +94,9 @@ export class Animator {
 	private cycles: Cycle[] = [];
 	private readonly settleTime: number;
 	private lastT = 0;
+	/** Scramble noise, re-rolled per cell once per `interval` bucket. */
+	private noise: string[] = [];
+	private noiseBucket = new Float64Array(0);
 
 	constructor(text: string, spec: AnimationSpec, rng: Rng = Math.random) {
 		this.text = text;
@@ -101,13 +128,22 @@ export class Animator {
 		this.lastT = t;
 		const out = this.chars.slice();
 		const trail = this.trail();
-		const noise = this.spec.reveal.kind === "etch" ? this.spec.reveal.noise : "";
+		const { reveal } = this.spec;
+		const noise = reveal.kind === "etch" ? reveal.noise : "";
+		const lead = reveal.kind === "scramble" ? this.scrambleLead(reveal) : 0;
+		const bucket = reveal.kind === "scramble" ? Math.floor(t / reveal.interval) : 0;
+		let cursorAt = -1;
 
 		for (let i = 0; i < out.length; i++) {
 			if (isBlank(out[i])) continue;
 			const at = this.revealAt[i];
-			if (t < at) out[i] = " ";
-			else if (trail > 0 && t < at + trail) out[i] = pick(noise, this.rng);
+			if (t < at) {
+				if (cursorAt < 0 && reveal.kind === "scramble") cursorAt = i;
+				out[i] = lead > 0 && t >= at - lead ? this.noiseAt(i, bucket) : " ";
+			} else if (trail > 0 && t < at + trail) out[i] = pick(noise, this.rng);
+		}
+		if (cursorAt >= 0 && reveal.kind === "scramble" && reveal.cursor) {
+			out[cursorAt] = reveal.cursor;
 		}
 
 		for (const c of this.cycles) {
@@ -139,6 +175,27 @@ export class Animator {
 		}
 	}
 
+	/** Seconds of reveal time covered by the scramble window (window / average typing rate). */
+	private scrambleLead(reveal: Extract<Reveal, { kind: "scramble" }>): number {
+		const perFrame =
+			typeof reveal.charsPerFrame === "number"
+				? reveal.charsPerFrame
+				: (reveal.charsPerFrame.from + reveal.charsPerFrame.to) / 2;
+		return reveal.window / Math.max(1, perFrame * this.fps);
+	}
+
+	private noiseAt(index: number, bucket: number): string {
+		if (this.noiseBucket.length !== this.chars.length) {
+			this.noiseBucket = new Float64Array(this.chars.length).fill(-1);
+			this.noise = new Array<string>(this.chars.length).fill(" ");
+		}
+		if (this.noiseBucket[index] !== bucket) {
+			this.noiseBucket[index] = bucket;
+			this.noise[index] = pick(poolFor(this.chars[index]), this.rng);
+		}
+		return this.noise[index];
+	}
+
 	private trail(): number {
 		return this.spec.reveal.kind === "etch" ? this.spec.reveal.trail : 0;
 	}
@@ -157,23 +214,14 @@ export class Animator {
 			case "none":
 				return times;
 			case "type":
-			case "scatter": {
-				const order = reveal.kind === "scatter" ? shuffle(visible, this.rng) : visible;
+			case "scramble": {
 				let f = 0;
-				for (let k = 0; k < order.length; f++) {
+				for (let k = 0; k < visible.length; f++) {
 					const batch = sampleInt(reveal.charsPerFrame, this.rng, true);
-					for (let b = 0; b < batch && k < order.length; b++, k++) {
-						times[order[k]] = start + f * frame;
+					for (let b = 0; b < batch && k < visible.length; b++, k++) {
+						times[visible[k]] = start + f * frame;
 					}
 				}
-				return times;
-			}
-			case "lines": {
-				let line = 0;
-				this.chars.forEach((ch, i) => {
-					times[i] = start + Math.floor(line / reveal.linesPerFrame) * frame;
-					if (ch === "\n") line++;
-				});
 				return times;
 			}
 			case "etch": {
@@ -221,13 +269,4 @@ export class Animator {
 			glyph: this.chars[index],
 		};
 	}
-}
-
-function shuffle<T>(items: T[], rng: Rng): T[] {
-	const out = items.slice();
-	for (let i = out.length - 1; i > 0; i--) {
-		const j = Math.floor(rng() * (i + 1));
-		[out[i], out[j]] = [out[j], out[i]];
-	}
-	return out;
 }

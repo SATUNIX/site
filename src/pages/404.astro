@@ -6,11 +6,11 @@ import { path } from "@/lib/url";
 const art = renderBanner("404");
 ---
 
-<BaseLayout title="Not found" noindex animated canonical="/404/">
+<BaseLayout title="Not found" noindex animated canonical="/404/" markdown={false}>
 	<section class="container section section--wide lost">
 		<h1 class="visually-hidden">Page not found</h1>
 		<div class="lost__frame" style={`--cols: ${columnsOf(art)}`}>
-			<pre class="ascii lost__art" data-ascii="hero-scatter" data-ascii-pointer aria-hidden="true">{art}</pre>
+			<pre class="ascii lost__art" data-ascii="hero-etch" data-ascii-pointer aria-hidden="true">{art}</pre>
 		</div>
 		<p class="mono muted lost__msg">?SYNTAX ERROR: no such page.</p>
 		<p class="mono"><a href={path("/")}>cd ~</a></p>

@@ -1,28 +1,29 @@
 ---
-// Public CV. Static (no animation runtime) and print-friendly: use the browser's print dialog
-// to produce a clean one-colour PDF.
+// Public CV. Text types in on scroll like the rest of the site; print.css disables the
+// animated layer so the browser's print dialog still produces a clean one-colour PDF.
+import RevealText from "@/components/RevealText.astro";
 import { site } from "@/config/site";
 import { cv } from "@/data/cv";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="CV" description={`Curriculum vitae of ${site.name}.`}>
+<BaseLayout title="CV" description={`Curriculum vitae of ${site.name}.`} animated>
 	<article class="container cv">
 		<header class="cv__head">
-			<p class="meta">cat cv.txt</p>
-			<h1 class="cv__name">{site.name}</h1>
+			<RevealText as="p" preset="label" class="meta" text="cat cv.txt" />
+			<RevealText as="h1" preset="title" class="cv__name" text={site.name} />
 			{
 				cv.summary ? (
-					<p class="cv__summary">{cv.summary}</p>
+					<RevealText as="p" preset="copy" class="cv__summary" text={cv.summary} />
 				) : (
 					<p class="unconfigured">Summary not written yet: edit src/data/cv.ts.</p>
 				)
 			}
-			{cv.note && <p class="cv__note meta">{cv.note}</p>}
+			{cv.note && <RevealText as="p" preset="label" class="cv__note meta" text={cv.note} />}
 		</header>
 
 		<section class="cv__section" aria-labelledby="cv-exp">
-			<h2 id="cv-exp" class="cv__label">Experience</h2>
+			<RevealText as="h2" preset="label" id="cv-exp" class="cv__label" text="Experience" />
 			{
 				cv.experience.length === 0 ? (
 					<p class="unconfigured">No roles added yet.</p>
@@ -30,16 +31,17 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 					<ol class="cv__list" role="list">
 						{cv.experience.map((role) => (
 							<li class="cv__item">
-								<p class="meta cv__period">{role.period}</p>
+								<RevealText as="p" preset="meta" class="meta cv__period" text={role.period} />
 								<div>
 									<h3 class="cv__role">
-										{role.title}
-										{role.org && <span class="muted"> / {role.org}</span>}
+										<RevealText preset="title" text={role.org ? `${role.title} / ${role.org}` : role.title} />
 									</h3>
 									{role.points.length > 0 && (
 										<ul class="cv__points">
 											{role.points.map((p) => (
-												<li>{p}</li>
+												<li>
+													<RevealText preset="copy" text={p} />
+												</li>
 											))}
 										</ul>
 									)}
@@ -52,14 +54,20 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		</section>
 
 		<section class="cv__section" aria-labelledby="cv-cap">
-			<h2 id="cv-cap" class="cv__label">Capabilities</h2>
+			<RevealText as="h2" preset="label" id="cv-cap" class="cv__label" text="Capabilities" />
 			<ul class="cv__caps">
-				{cv.capabilities.map((c) => <li>{c}</li>)}
+				{
+					cv.capabilities.map((c) => (
+						<li>
+							<RevealText preset="copy" text={c} />
+						</li>
+					))
+				}
 			</ul>
 		</section>
 
 		<section class="cv__section" aria-labelledby="cv-qual">
-			<h2 id="cv-qual" class="cv__label">Credentials</h2>
+			<RevealText as="h2" preset="label" id="cv-qual" class="cv__label" text="Credentials" />
 			{
 				cv.qualifications.length === 0 ? (
 					<p class="unconfigured">No credentials added yet.</p>
@@ -67,8 +75,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 					<ol class="cv__list" role="list">
 						{cv.qualifications.map((q) => (
 							<li class="cv__item">
-								<p class="meta cv__period">{q.status}</p>
-								<h3 class="cv__role">{q.name}</h3>
+								<RevealText as="p" preset="meta" class="meta cv__period" text={q.status} />
+								<RevealText as="h3" preset="title" class="cv__role" text={q.name} />
 							</li>
 						))}
 					</ol>
@@ -77,7 +85,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		</section>
 
 		<section class="cv__section" aria-labelledby="cv-skills">
-			<h2 id="cv-skills" class="cv__label">Skills</h2>
+			<RevealText as="h2" preset="label" id="cv-skills" class="cv__label" text="Skills" />
 			{
 				cv.skills.length === 0 ? (
 					<p class="unconfigured">No skills added yet.</p>
@@ -85,8 +93,12 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 					<dl class="cv__skills">
 						{cv.skills.map((group) => (
 							<div>
-								<dt class="meta">{group.label}</dt>
-								<dd>{group.items.join(", ")}</dd>
+								<dt class="meta">
+									<RevealText preset="label" text={group.label} />
+								</dt>
+								<dd>
+									<RevealText preset="copy" text={group.items.join(", ")} />
+								</dd>
 							</div>
 						))}
 					</dl>

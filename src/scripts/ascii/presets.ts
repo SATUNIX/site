@@ -1,7 +1,8 @@
 // Named animation presets. Markup opts in with `data-ascii="<preset>"`.
 //
 // Timings started from values observed on gatesnotes.com (24fps, random batch sizes, biased
-// durations so most glyphs settle fast and a few linger) and were tuned for this site.
+// durations so most glyphs settle fast and a few linger) and were tuned for this site. Text
+// presets use the "scramble" reveal: a band of class-matched noise runs ahead of the typing head.
 
 import type { AnimationSpec, CycleLayer } from "./animator";
 
@@ -28,49 +29,20 @@ const dropout = (every: CycleLayer["every"], maxDuration = 0.5): CycleLayer => (
 });
 
 export const PRESETS = {
-	/** Hero mode 1: a slanted wavefront etches the banner, trailing noise. */
+	/** The wordmark: a slanted wavefront etches the banner, trailing noise, then the ink boils. */
 	"hero-etch": {
 		delay: 0.2,
 		reveal: { kind: "etch", colsPerSecond: 95, slant: 2.5, trail: 0.22, noise: NOISE },
 		cycles: [inkBoil, dropout({ from: 5, to: 10 })],
 	},
-	/** Hero mode 2: everything appears as noise, then locks in roughly left to right. */
-	"hero-decrypt": {
-		delay: 0.2,
-		reveal: { kind: "type", charsPerFrame: { from: 70, to: 110 } },
-		cycles: [
-			{
-				every: 1,
-				output: NOISE,
-				origRatio: 0.12,
-				interval: { from: 0.04, to: 0.09 },
-				duration: { from: 0.35, to: 1.3, bias: 2 },
-			},
-		],
-	},
-	/** Hero mode 3: glyphs land in random order across the block. */
-	"hero-scatter": {
-		delay: 0.2,
-		reveal: { kind: "scatter", charsPerFrame: { from: 25, to: 55 } },
-		cycles: [
-			{
-				every: 1,
-				output: NOISE,
-				origRatio: 0,
-				interval: { from: 0.03, to: 0.07 },
-				duration: { from: 0.05, to: 0.5, bias: 3 },
-			},
-			inkBoil,
-		],
-	},
-	/** Monospace labels, eyebrows and nav-scale text. */
+	/** Monospace labels, eyebrows and short values: typed with a short scramble band. */
 	label: {
-		reveal: { kind: "type", charsPerFrame: { from: 1, to: 3 } },
-		cycles: [dropout({ from: 2, to: 4 }, 0.35)],
+		reveal: { kind: "scramble", charsPerFrame: { from: 1, to: 3 }, window: 5, interval: 0.05, cursor: "_" },
+		cycles: [dropout({ from: 3, to: 6 }, 0.3)],
 	},
 	/** Dates and other numbers: digits roll before settling. */
 	meta: {
-		reveal: { kind: "type", charsPerFrame: { from: 1, to: 4 } },
+		reveal: { kind: "scramble", charsPerFrame: { from: 1, to: 3 }, window: 6, interval: 0.04 },
 		cycles: [
 			{
 				every: 1,
@@ -82,20 +54,15 @@ export const PRESETS = {
 			},
 		],
 	},
-	/** Proportional headings: quick typing with a light flicker. */
+	/** Headings: typed with a scramble band ahead of the head. */
 	title: {
-		reveal: { kind: "type", charsPerFrame: { from: 2, to: 5 } },
-		cycles: [dropout({ from: 3, to: 6 }, 0.25)],
+		reveal: { kind: "scramble", charsPerFrame: { from: 1, to: 3 }, window: 8, interval: 0.05, cursor: "_" },
 	},
-	/** Short blocks of supporting copy. Fast: never make a reader wait. */
+	/** Body copy: fast scramble-typing so paragraphs resolve in about a second. */
 	copy: {
 		fps: 30,
-		reveal: { kind: "type", charsPerFrame: { from: 8, to: 16 } },
-	},
-	/** Multi-line ASCII art: line by line, then the ink boils. */
-	art: {
-		reveal: { kind: "lines", linesPerFrame: 1 },
-		cycles: [inkBoil],
+		reveal: { kind: "scramble", charsPerFrame: { from: 6, to: 12 }, window: 24, interval: 0.06, cursor: "_" },
+		cycles: [dropout({ from: 12, to: 24 }, 0.35)],
 	},
 } satisfies Record<string, AnimationSpec>;
 

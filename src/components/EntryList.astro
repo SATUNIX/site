@@ -34,10 +34,13 @@ const pad = (n: number) => String(n).padStart(2, "0");
 					<h2 class="entry__title">
 						<RevealText preset="title" text={entry.title} />
 					</h2>
-					{entry.tagline && <p class="entry__tagline mono">{entry.tagline}</p>}
-					<p class="entry__summary">{entry.summary}</p>
+					{entry.tagline && (
+						<RevealText as="p" preset="label" class="entry__tagline mono" text={entry.tagline} />
+					)}
+					<RevealText as="p" preset="copy" class="entry__summary" text={entry.summary} />
 					<p class="entry__items meta">
-						<span class="entry__items-label">{itemsLabel}:</span> {entry.items.join(" / ")}
+						<span class="entry__items-label">{itemsLabel}:</span>{" "}
+						<RevealText preset="copy" text={entry.items.join(" / ")} />
 					</p>
 					{entry.href && (
 						<p class="entry__link mono">

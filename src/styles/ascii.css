@@ -21,10 +21,22 @@
 	position: relative;
 }
 
+/* Inline reveals become inline-blocks: an absolutely positioned overlay inside a plain inline
+   box only covers the first line fragment, so wrapped text would overlap itself. */
+span.reveal,
+time.reveal {
+	display: inline-block;
+	max-width: 100%;
+	vertical-align: top;
+}
+
 .reveal__art {
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
+	/* Only the real text underneath is selectable/copyable. */
+	user-select: none;
+	font-variant-ligatures: none;
 }
 
 html[data-motion="on"] .reveal__text {

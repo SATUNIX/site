@@ -1,5 +1,6 @@
 ---
 import EntryList from "@/components/EntryList.astro";
+import RevealText from "@/components/RevealText.astro";
 import SectionHead from "@/components/SectionHead.astro";
 import { site } from "@/config/site";
 import { projects, projectsIntro } from "@/data/projects";
@@ -23,7 +24,7 @@ const entries = projects.map((p) => ({
 	<section class="container section section--wide">
 		<SectionHead label="ls lab/  (personal research)" title="Projects" />
 		<div class="lede muted">
-			{projectsIntro.map((para) => <p>{para}</p>)}
+			{projectsIntro.map((para) => <RevealText as="p" preset="copy" text={para} />)}
 			{
 				site.links.github && (
 					<p class="mono">

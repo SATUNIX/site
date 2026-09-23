@@ -34,6 +34,24 @@ describe("Animator", () => {
 		expect(anim.frame(0.1)).toBe("abcd");
 	});
 
+	it("scramble: class-matched noise ahead of the head, blanks beyond, cursor at the head", () => {
+		const text = "abc DEF 123 xyz";
+		const anim = new Animator(
+			text,
+			{ fps: 10, reveal: { kind: "scramble", charsPerFrame: 1, window: 5.5, interval: 0.1, cursor: "_" } },
+			seeded(3),
+		);
+		// After 3 frames: "abc" typed, cursor on "D", noise through "3" (5.5-char window), blanks after.
+		const f = anim.frame(0.3);
+		expect(f.slice(0, 4)).toBe("abc ");
+		expect(f[4]).toBe("_");
+		expect(f.slice(5, 7)).toMatch(/^[A-Z]{2}$/);
+		expect(f[7]).toBe(" ");
+		expect(f.slice(8, 11)).toMatch(/^[0-9]{3}$/);
+		expect(f.slice(11)).toBe("    ");
+		expect(anim.frame(anim.duration)).toBe(text);
+	});
+
 	it("perturb only touches non-blank characters and settles again", () => {
 		const anim = new Animator("a b", { reveal: { kind: "none" } }, seeded(1));
 		anim.frame(5);

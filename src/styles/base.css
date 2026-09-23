@@ -32,7 +32,7 @@
 html {
 	background: var(--color-bg);
 	color: var(--color-fg);
-	font-family: var(--font-sans);
+	font-family: var(--font-mono);
 	font-size: 100%;
 	line-height: 1.6;
 	-webkit-text-size-adjust: 100%;
@@ -40,13 +40,16 @@ html {
 	scroll-behavior: smooth;
 }
 
+/* Body copy is monospace (JetBrains Mono): it reads like a terminal and lets the typing and
+   scramble effects keep a fixed character grid. Headings stay in the bold sans. */
 body {
 	margin: 0;
 	min-height: 100vh;
 	background: var(--color-bg);
 	color: var(--color-fg);
-	font-family: var(--font-sans);
+	font-family: var(--font-mono);
 	font-size: var(--step-0);
+	font-variant-ligatures: none;
 }
 
 h1,

@@ -86,6 +86,19 @@ export function play(el: HTMLElement, preset?: PresetName): void {
 	wake(entry);
 }
 
+/**
+ * Put an element back in its pre-reveal state (hidden by CSS, final text restored) so it can
+ * type in again next time it scrolls into view.
+ */
+export function reset(el: HTMLElement): void {
+	const entry = entries.get(el);
+	if (entry) {
+		running.delete(entry);
+		el.textContent = entry.text;
+	}
+	delete el.dataset.inview;
+}
+
 /** Map a client-space point to character indices within `radius` px, biased to the centre. */
 function cellsNear(entry: Entry, x: number, y: number, radius: number, count: number): number[] {
 	const lines = entry.text.split("\n");
@@ -173,15 +186,18 @@ export function initAscii(root: ParentNode = document): void {
 		return;
 	}
 
+	// Blocks type in when they enter the viewport and reset when they fully leave it, so
+	// scrolling back to them plays the effect again.
 	const observer = new IntersectionObserver(
 		(records) => {
 			for (const record of records) {
-				if (!record.isIntersecting) continue;
-				observer.unobserve(record.target);
-				play(record.target as HTMLElement);
+				const el = record.target as HTMLElement;
+				const inview = el.dataset.inview === "true";
+				if (record.isIntersecting && !inview) play(el);
+				else if (!record.isIntersecting && inview) reset(el);
 			}
 		},
-		{ threshold: 0.2, rootMargin: "0px 0px -8% 0px" },
+		{ threshold: 0, rootMargin: "0px 0px -6% 0px" },
 	);
 	for (const el of targets) {
 		observer.observe(el);

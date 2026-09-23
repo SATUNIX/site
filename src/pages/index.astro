@@ -10,23 +10,7 @@ import { path } from "@/lib/url";
 
 const recent = (await getPublishedPosts()).slice(0, 3);
 const keyWidth = Math.max(...profile.facts.map((f) => f.key.length));
-const areas = [
-	{
-		name: "Offensive Security",
-		text: "Penetration testing and adversary simulation across networks, Active Directory, cloud and APIs.",
-		href: path("work/"),
-	},
-	{
-		name: "Security Engineering",
-		text: "The infrastructure behind the testing: C2, telemetry pipelines, GitOps, tooling and platforms.",
-		href: path("work/"),
-	},
-	{
-		name: "AI Systems",
-		text: "Securing autonomous agents, and building constrained agent systems in a private lab.",
-		href: path("projects/"),
-	},
-];
+const areas = profile.areas.map((area) => ({ ...area, href: path(area.page) }));
 const routes = [
 	{ cmd: "ls work/", href: path("work/"), note: "representative engagement types" },
 	{ cmd: "ls lab/", href: path("projects/"), note: "personal research and experiments" },
@@ -45,7 +29,7 @@ const routes = [
 			<div class="about__intro prose">
 				{
 					profile.intro.length > 0 ? (
-						profile.intro.map((para) => <p>{para}</p>)
+						profile.intro.map((para) => <RevealText as="p" preset="copy" text={para} />)
 					) : (
 						<p class="unconfigured">
 							Intro not written yet: add paragraphs to src/data/profile.ts.
@@ -84,7 +68,7 @@ const routes = [
 								<RevealText preset="title" text={area.name} />
 							</a>
 						</h3>
-						<p class="area__text muted">{area.text}</p>
+						<RevealText as="p" preset="copy" class="area__text muted" text={area.text} />
 					</li>
 				))
 			}
@@ -107,7 +91,7 @@ const routes = [
 							<span class="routes__prompt" aria-hidden="true">$ </span>
 							<RevealText preset="label" text={r.cmd} />
 						</a>
-						<span class="routes__note muted">{r.note}</span>
+						<RevealText preset="label" class="routes__note muted" text={r.note} />
 					</li>
 				))
 			}

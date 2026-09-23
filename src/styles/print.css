@@ -44,6 +44,11 @@
 		text-decoration: underline;
 	}
 
+	/* Animated layers never print; the real text underneath is forced visible. */
+	.reveal__text {
+		color: inherit !important;
+	}
+
 	/* Decorative artwork never prints. */
 	canvas,
 	[aria-hidden="true"] {

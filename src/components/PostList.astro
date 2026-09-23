@@ -38,7 +38,7 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 						) : (
 							post.data.wip && <p class="post-list__draft meta">[ draft: work in progress ]</p>
 						)}
-						<p class="post-list__desc muted">{post.data.description}</p>
+						<RevealText as="p" preset="copy" class="post-list__desc muted" text={post.data.description} />
 					</div>
 				</li>
 			))}
