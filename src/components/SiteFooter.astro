@@ -1,5 +1,5 @@
 ---
-// Footer: feed link, motion toggle on animated pages, and an explicit unconfigured notice.
+// Footer: copyright, feed link and the motion toggle on animated pages.
 import { site } from "@/config/site";
 import { path } from "@/lib/url";
 
@@ -22,6 +22,5 @@ const year = new Date().getFullYear();
 				</button>
 			)
 		}
-		{!site.isConfigured && <p class="unconfigured">site config: placeholder values</p>}
 	</div>
 </footer>

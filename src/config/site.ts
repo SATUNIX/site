@@ -1,76 +1,45 @@
 // Single source of truth for site identity and deployment.
 //
-// Every value that the operator must supply is left as a literal `PLACEHOLDER...` string
-// (or `null`, for optional links) so that `scripts/check-site.mjs`, the README and the UI
-// can all detect an unconfigured site instead of silently shipping invented content.
-// Never replace a placeholder with a guess.
+// Everything here is plain ASCII (enforced by scripts/check-site.mjs). Optional links are
+// `null` to leave them off the site entirely rather than render an empty row.
 
 /** Where the site is published, and how its internal links are rooted. */
 export interface SiteConfig {
-	/**
-	 * Your name or the site title. Shown in the header and page titles.
-	 * FILL IN: replace "PLACEHOLDER NAME".
-	 */
+	/** Name shown in the header, page titles and the homepage wordmark. */
 	name: string;
-	/**
-	 * One short line under the name; plain ASCII, no decoration.
-	 * FILL IN: replace "PLACEHOLDER TAGLINE".
-	 */
+	/** One short line under the name. */
 	tagline: string;
-	/**
-	 * Default meta description (one sentence, plain ASCII).
-	 * FILL IN: replace "PLACEHOLDER DESCRIPTION".
-	 */
+	/** Default meta description: one sentence. */
 	description: string;
 	/**
 	 * Canonical production origin, no trailing slash and no sub-path.
-	 * Used by the sitemap, RSS and absolute URLs.
-	 * FILL IN: replace "PLACEHOLDER" with your domain, e.g. "https://example.com".
+	 * Used by canonical URLs, the sitemap, RSS and the Markdown twins.
 	 */
 	url: string;
 	/**
-	 * Sub-path the site is served from. `""` (or `"/"`) means root hosting.
-	 * For a GitHub Pages project site set this to `"/<repository>/"`.
-	 * This is the base half of the deploy decision, not personal content, so it is a
-	 * documented default rather than a PLACEHOLDER: set it explicitly when you know where
-	 * the site will live.
+	 * Sub-path the site is served from: `""` for root hosting, `"/<repository>/"` for a
+	 * GitHub Pages project site.
 	 */
 	base: string;
-	/**
-	 * Author name used for feed metadata and print footers.
-	 * FILL IN: replace "PLACEHOLDER AUTHOR".
-	 */
+	/** Author name for feed metadata, the footer and print output. */
 	author: string;
-	/** External profiles and the derived feed URL. */
+	/** External profiles and the feed. */
 	links: SiteLinks;
 	/**
-	 * Path (relative to the site root) of the published OpenPGP public key.
-	 * FILL IN: set to "keys/public.asc" once you drop the key in public/keys/.
-	 * Stays `null` until a real key exists; never invent key material.
+	 * Site-root-relative path of the published OpenPGP public key ("keys/public.asc"), or
+	 * `null` until a real key is in public/keys/. The fingerprint is derived at build time.
 	 */
 	pgpKeyPath: string | null;
-	/**
-	 * `false` until every PLACEHOLDER above is replaced. Components use this to show an
-	 * explicit "unconfigured" state instead of a broken or misleading page.
-	 * FILL IN: flip to `true` once the site is configured.
-	 */
-	isConfigured: boolean;
 }
 
 export interface SiteLinks {
-	/** FILL IN: full https URL, or leave `null` to show an unconfigured state. */
+	/** Full https URLs, or `null` to leave the link off the site. */
 	github: string | null;
-	/** Full https URL, or `null` to leave it off the site. */
 	linkedin: string | null;
-	/** FILL IN: full https URL, or leave `null` to show an unconfigured state. */
 	gravatar: string | null;
-	/** e.g. "mailto:you@example.com", or `null` to leave it off the site. */
+	/** e.g. "mailto:you@example.com", or `null`. */
 	contact: string | null;
-	/**
-	 * Feed path relative to the site root. Leave as-is; components run it through the
-	 * base-path helpers in src/lib/url.ts, so it works at the domain root and under
-	 * `/<repository>/` alike.
-	 */
+	/** Feed path relative to the site root; run through the base-path helpers in src/lib/url.ts. */
 	rss: string;
 }
 
@@ -92,5 +61,4 @@ export const site: SiteConfig = {
 		rss: "/rss.xml",
 	},
 	pgpKeyPath: null,
-	isConfigured: true,
 };
