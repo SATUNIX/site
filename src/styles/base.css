@@ -3,15 +3,15 @@
 
 @import "./tokens.css";
 
-/* JetBrains Mono, OFL-1.1, vendored under public/fonts/jetbrains-mono/.
-   The URL is relative so the bundler emits it correctly under any base path:
-   the CSS lands in dist/_astro/ and ../fonts/ resolves to the site root's /fonts/. */
+/* JetBrains Mono, OFL-1.1, vendored under src/assets/fonts/jetbrains-mono/.
+   Vite resolves the relative URL and emits the fonts with content hashes into
+   dist/_astro/, so they cache forever and work under any base path. */
 @font-face {
 	font-family: "JetBrains Mono";
 	font-style: normal;
 	font-weight: 400;
 	font-display: swap;
-	src: url("../fonts/jetbrains-mono/JetBrainsMono-Regular.woff2")
+	src: url("../assets/fonts/jetbrains-mono/JetBrainsMono-Regular.woff2")
 		format("woff2");
 }
 
@@ -20,7 +20,7 @@
 	font-style: normal;
 	font-weight: 700;
 	font-display: swap;
-	src: url("../fonts/jetbrains-mono/JetBrainsMono-Bold.woff2") format("woff2");
+	src: url("../assets/fonts/jetbrains-mono/JetBrainsMono-Bold.woff2") format("woff2");
 }
 
 *,
