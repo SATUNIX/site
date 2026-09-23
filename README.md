@@ -100,38 +100,50 @@ scratch in `src/scripts/ascii/`:
 - **The final text is the HTML.** No-JS and reduced-motion visitors simply see it.
 - **Space is reserved.** Characters not yet revealed render as spaces (line breaks kept), so
   the block is at full size from the first frame and nothing below it moves.
-- **Biased randomness.** Chosen characters flicker between their real glyph and random ones.
-  Durations are sampled as `from + rand^bias * (to - from)`, so most settle almost instantly
-  and a few linger, which reads like an uneven print head.
-- **One loop, capped.** A single `requestAnimationFrame` loop redraws at most 24 times a
-  second, only while something is animating, and starts each block's clock on its first
-  visible frame.
-- **Triggered by scroll.** An IntersectionObserver starts each block as it enters the viewport.
-- **Accessible.** Animated copies are `aria-hidden`; the real text sits underneath (headings)
-  or in a visually-hidden element (the wordmark). The `[ motion ]` footer switch pauses
-  everything and is remembered, and `prefers-reduced-motion` turns animation off entirely.
+- **Scramble typing.** Text types in left to right with a band of noise running ahead of the
+  typing head and a `_` cursor, like GSAP's ScrambleText. Noise keeps each character's class
+  (lowercase, uppercase, digits), so word shapes hold while they resolve.
+- **Biased randomness.** Some characters flicker for a short, random time. Durations are
+  sampled as `from + rand^bias * (to - from)`, so most settle almost instantly and a few
+  linger, which reads like an uneven print head.
+- **Etched wordmark.** The name banner is drawn by a slanted wavefront that trails noise.
+- **Plays on every visit to a block.** An IntersectionObserver types each block in as it enters
+  the viewport and resets it when it leaves, so scrolling back plays it again.
+- **One loop, capped.** A single `requestAnimationFrame` loop redraws at most 24-30 times a
+  second, only while something is animating.
+- **Accessible.** Animated copies are `aria-hidden` and unselectable; the real text sits
+  underneath, painted transparent while the overlay runs. The `[ motion ]` footer switch
+  pauses everything and is remembered; `prefers-reduced-motion` turns animation off entirely.
+  Printing always shows the real text.
 
 | File | Role |
 | --- | --- |
-| `animator.ts` | pure frame engine: reveal schedules (type, lines, scatter, etch) + cycle layers |
-| `presets.ts` | named timings: `hero-etch`, `hero-decrypt`, `hero-scatter`, `label`, `meta`, `title`, `copy`, `art` |
+| `animator.ts` | pure frame engine: reveal schedules (type, scramble, etch) + cycle layers |
+| `presets.ts` | named timings: `hero-etch`, `label`, `meta`, `title`, `copy` |
 | `index.ts` | DOM runtime: observer, render loop, pointer ripple, motion toggle |
 | `font.ts` | 5-row bitmap font for the banner (wide and compact variants) |
 
-Opt any element in with `data-ascii="<preset>"`, or use `<RevealText text="..." preset="title" />`.
+Opt any element in with `<RevealText text="..." preset="copy" as="p" />` (or `data-ascii`
+on a `pre`). Article bodies stay static so long reads never wait on an animation.
 
-The hero has three entrance modes, switchable with the buttons under the wordmark. Once you've
-picked one, set it with `<HeroArtwork mode="decrypt" showModeSwitch={false} />` in
-`src/pages/index.astro`.
+## For agents
+
+- `/llms.txt`: an [llms.txt](https://llmstxt.org) index of the site
+- `/llms-full.txt`: every page and post as one Markdown document
+- `/<page>.md`: a Markdown twin of every page (`/cv.md`, `/work.md`, `/blog/<post>.md`, ...),
+  advertised from each HTML page with `<link rel="alternate" type="text/markdown">`
+
+These are generated at build time from the same data as the HTML (`src/lib/markdown.ts`).
 
 ## Layout
 
 ```
 src/
   config/site.ts        identity, links, deploy URL + base path
-  data/                 profile, CV, derived PGP fingerprint
+  data/                 profile, work, projects, CV, derived PGP fingerprint
   content/blog/         Markdown posts
-  pages/                routes: /, /blog/, /blog/<id>/, /cv/, /links/, 404, rss.xml
+  pages/                routes: /, /work/, /projects/, /blog/, /cv/, /links/, 404, rss,
+                        llms.txt, llms-full.txt, robots.txt, *.md twins
   layouts/ components/  page shell, header/footer, hero, post list, reveal text
   scripts/ascii/        animation engine (framework-free, unit tested)
   styles/               tokens, base, layout, prose, ascii, print

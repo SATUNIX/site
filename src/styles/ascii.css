@@ -33,6 +33,9 @@ time.reveal {
 .reveal__art {
 	position: absolute;
 	inset: 0;
+	/* Mirror the host's padding so the overlay's text starts exactly where the real text does. */
+	padding: inherit;
+	box-sizing: border-box;
 	pointer-events: none;
 	/* Only the real text underneath is selectable/copyable. */
 	user-select: none;
