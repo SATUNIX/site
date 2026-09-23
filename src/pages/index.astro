@@ -3,8 +3,10 @@ import HeroArtwork from "@/components/HeroArtwork.astro";
 import PostList from "@/components/PostList.astro";
 import RevealText from "@/components/RevealText.astro";
 import SectionHead from "@/components/SectionHead.astro";
+import { site } from "@/config/site";
 import { profile } from "@/data/profile";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { heroBanner } from "@/lib/hero";
 import { getPublishedPosts } from "@/lib/posts";
 import { path } from "@/lib/url";
 
@@ -20,7 +22,7 @@ const routes = [
 ];
 ---
 
-<BaseLayout animated canonical="/">
+<BaseLayout animated canonical="/" inlineCss={heroBanner(site.name).css}>
 	<HeroArtwork />
 
 	<section class="container section about" aria-labelledby="about">

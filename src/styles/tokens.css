@@ -12,6 +12,14 @@
 	--color-code-band: #222222;
 	/* Grayscale ink for ASCII artwork: a touch below --color-fg so dense glyph fields don't glare. */
 	--color-art: #cfcfcf;
+	/* Syntax highlighting (Prism token classes, styled in prose.css). */
+	--syntax-comment: #8b949e;
+	--syntax-keyword: #ff7b72;
+	--syntax-string: #a5d6ff;
+	--syntax-constant: #79c0ff;
+	--syntax-function: #d2a8ff;
+	--syntax-variable: #ffa657;
+	--syntax-tag: #7ee787;
 
 	/* Type */
 	--font-sans: Helvetica, Arial, sans-serif;

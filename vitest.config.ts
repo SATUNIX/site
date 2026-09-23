@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
-// Vitest only runs the pure logic modules (base-path helpers, fingerprint shape).
+// Vitest only runs the pure logic modules (base-path, CSP and PGP helpers, animation engine).
 // Astro pages/components are covered by `astro check` + a production build + check-site.
 export default defineConfig({
 	resolve: {

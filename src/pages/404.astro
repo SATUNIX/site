@@ -4,12 +4,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { path } from "@/lib/url";
 
 const art = renderBanner("404");
+// Passed to the layout's <head> rather than a style="" attribute, which the CSP blocks.
+const frameCss = `.lost__frame { --cols: ${columnsOf(art)}; }`;
 ---
 
-<BaseLayout title="Not found" noindex animated canonical="/404/" markdown={false}>
+<BaseLayout title="Not found" noindex animated canonical="/404/" markdown={false} inlineCss={frameCss}>
 	<section class="container section section--wide lost">
 		<h1 class="visually-hidden">Page not found</h1>
-		<div class="lost__frame" style={`--cols: ${columnsOf(art)}`}>
+		<div class="lost__frame">
 			<pre class="ascii lost__art" data-ascii="hero-etch" data-ascii-pointer aria-hidden="true">{art}</pre>
 		</div>
 		<p class="mono muted lost__msg">?SYNTAX ERROR: no such page.</p>

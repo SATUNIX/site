@@ -8,8 +8,12 @@
 //                        modules; use the helpers in src/lib/url.ts instead.
 //   3. Built routes    - when dist/ exists, the expected routes were emitted (this is what
 //                        catches a draft silently disappearing from a production build).
+//   4. CSP coverage    - every built HTML page carries a Content-Security-Policy, every inline
+//                        <script>/<style> is allowed by a hash in it, and there are no inline
+//                        style="" attributes or on* event handlers (which the policy blocks).
 //
 // It does NOT validate HTML, DNS, deployment or comment semantics. Node built-ins only.
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -67,12 +71,12 @@ const EXPECTED_ROUTES = [
 const errors = [];
 const rel = (file) => path.relative(root, file).split(path.sep).join("/");
 
-function walk(dir) {
+function walk(dir, extensions = TEXT_EXTENSIONS) {
 	const found = [];
 	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
 		const full = path.join(dir, entry.name);
-		if (entry.isDirectory()) found.push(...walk(full));
-		else if (TEXT_EXTENSIONS.has(path.extname(entry.name))) found.push(full);
+		if (entry.isDirectory()) found.push(...walk(full, extensions));
+		else if (extensions.has(path.extname(entry.name))) found.push(full);
 	}
 	return found;
 }
@@ -118,6 +122,44 @@ function checkDistRoutes() {
 	}
 }
 
+/** Sources allowed by one CSP directive, e.g. "script-src" -> ["'self'", "'sha256-...'"]. */
+function directive(policy, name) {
+	const part = policy
+		.split(";")
+		.map((d) => d.trim())
+		.find((d) => d.startsWith(`${name} `));
+	return part ? part.split(/\s+/).slice(1) : [];
+}
+
+function checkCsp(file) {
+	const html = fs.readFileSync(file, "utf8");
+	const meta = html.match(/<meta http-equiv="content-security-policy" content="([^"]*)"/i);
+	if (!meta) {
+		errors.push(`${rel(file)}: no Content-Security-Policy meta tag`);
+		return;
+	}
+	const policy = meta[1].replace(/&#39;/g, "'");
+	const allowed = {
+		script: new Set(directive(policy, "script-src")),
+		style: new Set(directive(policy, "style-src")),
+	};
+	const inline = /<(script|style)\b([^>]*)>([\s\S]*?)<\/\1>/gi;
+	for (const [, tag, attrs, body] of html.matchAll(inline)) {
+		if (tag.toLowerCase() === "script" && /\bsrc=/.test(attrs)) continue;
+		if (/type="application\/(ld\+)?json"/.test(attrs)) continue;
+		const hash = `'sha256-${createHash("sha256").update(body, "utf8").digest("base64")}'`;
+		if (!allowed[tag.toLowerCase()].has(hash)) {
+			errors.push(`${rel(file)}: inline <${tag}> not covered by the CSP (${hash})`);
+		}
+	}
+	if (/<[a-z][^>]*\sstyle="/i.test(html)) {
+		errors.push(`${rel(file)}: inline style="" attribute (blocked by the CSP)`);
+	}
+	if (/<[a-z][^>]*\son[a-z]+="/i.test(html)) {
+		errors.push(`${rel(file)}: inline on* event handler (blocked by the CSP)`);
+	}
+}
+
 if (!fs.existsSync(srcDir)) {
 	errors.push("src/: directory is missing");
 } else {
@@ -128,6 +170,9 @@ if (!fs.existsSync(srcDir)) {
 	}
 }
 checkDistRoutes();
+if (fs.existsSync(distDir)) {
+	for (const file of walk(distDir, new Set([".html"]))) checkCsp(file);
+}
 
 if (errors.length > 0) {
 	console.error(`[check-site] ${errors.length} problem(s):`);

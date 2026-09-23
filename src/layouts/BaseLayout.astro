@@ -12,6 +12,7 @@ import MotionState from "@/components/MotionState.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
 import { site } from "@/config/site";
+import { inlineStyle } from "@/lib/csp";
 import { markdownPath } from "@/lib/markdown";
 import { absolute, asset, basePath, path } from "@/lib/url";
 
@@ -25,6 +26,8 @@ interface Props {
 	bodyClass?: string;
 	/** Advertise this page's Markdown twin (/<page>.md). Off for pages without one (404). */
 	markdown?: boolean;
+	/** Page-specific CSS computed at build time; emitted in <head> and hashed into the CSP. */
+	inlineCss?: string;
 }
 
 const {
@@ -35,6 +38,7 @@ const {
 	animated = false,
 	bodyClass = "",
 	markdown = true,
+	inlineCss,
 } = Astro.props;
 
 const fullTitle = title ? `${title} | ${site.name}` : site.name;
@@ -51,8 +55,10 @@ const canonicalPath =
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="color-scheme" content="dark" />
 		<meta name="theme-color" content="#161616" />
+		<meta name="referrer" content="strict-origin-when-cross-origin" />
 		<title>{fullTitle}</title>
 		<meta name="description" content={description} />
+		<meta name="author" content={site.author} />
 		<link rel="canonical" href={absolute(canonicalPath)} />
 		{noindex && <meta name="robots" content="noindex" />}
 		<link rel="icon" href={asset("favicon.svg")} type="image/svg+xml" />
@@ -62,7 +68,10 @@ const canonicalPath =
 		<meta property="og:title" content={fullTitle} />
 		<meta property="og:description" content={description} />
 		<meta property="og:type" content="website" />
+		<meta property="og:url" content={absolute(canonicalPath)} />
+		<meta property="og:site_name" content={site.name} />
 		{animated && <MotionState />}
+		{inlineCss && <style is:inline set:html={inlineStyle(Astro, inlineCss)} />}
 	</head>
 	<body class={bodyClass}>
 		<a class="skip-link" href="#main">Skip to content</a>

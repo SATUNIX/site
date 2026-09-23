@@ -37,7 +37,7 @@
 }
 
 /* Code listings as fanfold printer paper: neutral bands every three lines, aligned to the
-   line grid (padding is exactly one line). Shiki's inline background is overridden. */
+   line grid (padding is exactly one line). */
 .prose pre {
 	--line: 1.5em;
 	background:
@@ -46,14 +46,75 @@
 			var(--color-code-band) 0 calc(var(--line) * 3),
 			transparent calc(var(--line) * 3) calc(var(--line) * 6)
 		),
-		var(--color-code-bg) !important;
-	background-position: 0 var(--line) !important;
+		var(--color-code-bg);
+	background-position: 0 var(--line);
 	padding: var(--line) 2ch;
 	overflow-x: auto;
 	font-size: var(--step--1);
 	line-height: var(--line);
 	font-variant-ligatures: none;
 	tab-size: 2;
+}
+
+/* Prism token colours. */
+.prose .token.comment,
+.prose .token.prolog,
+.prose .token.doctype,
+.prose .token.cdata {
+	color: var(--syntax-comment);
+}
+
+.prose .token.keyword,
+.prose .token.operator,
+.prose .token.important,
+.prose .token.atrule,
+.prose .token.selector {
+	color: var(--syntax-keyword);
+}
+
+.prose .token.string,
+.prose .token.char,
+.prose .token.regex,
+.prose .token.attr-value,
+.prose .token.url {
+	color: var(--syntax-string);
+}
+
+.prose .token.number,
+.prose .token.boolean,
+.prose .token.constant,
+.prose .token.builtin,
+.prose .token.entity {
+	color: var(--syntax-constant);
+}
+
+.prose .token.function,
+.prose .token.class-name {
+	color: var(--syntax-function);
+}
+
+.prose .token.variable,
+.prose .token.property,
+.prose .token.parameter {
+	color: var(--syntax-variable);
+}
+
+.prose .token.tag,
+.prose .token.attr-name,
+.prose .token.inserted {
+	color: var(--syntax-tag);
+}
+
+.prose .token.deleted {
+	color: var(--syntax-keyword);
+}
+
+.prose .token.bold {
+	font-weight: 700;
+}
+
+.prose .token.italic {
+	font-style: italic;
 }
 
 .prose :not(pre) > code {
