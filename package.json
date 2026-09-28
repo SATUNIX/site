@@ -31,7 +31,7 @@
     "@astrojs/markdown-satteri": "^0.4.2",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.3.4",
+    "astro": "^7.3.5",
     "typescript": "^6.0.3",
     "vitest": "^5.0.1"
   }
