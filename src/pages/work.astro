@@ -13,7 +13,7 @@ const entries = engagements.map((e) => ({ title: e.title, summary: e.summary, it
 	description="Representative types of offensive security and security engineering work."
 	animated
 >
-	<section class="container section section--wide">
+	<section class="container section section--wide section--split">
 		<SectionHead label="ls work/  (types, not clients)" title="Work" />
 		<RevealText as="p" preset="copy" class="lede muted" text={workIntro} />
 		<EntryList entries={entries} itemsLabel="covers" />
@@ -23,7 +23,7 @@ const entries = engagements.map((e) => ({ title: e.title, summary: e.summary, it
 <style>
 	.lede {
 		max-width: var(--measure);
-		margin-bottom: var(--space-4);
-		line-height: 1.65;
+		margin-bottom: var(--space-5);
+		line-height: 1.6;
 	}
 </style>

@@ -2,17 +2,18 @@
    Elements with [data-ascii] hold their FINAL text in the HTML; the script rewrites it per frame.
    Only html[data-motion="on"] animates. */
 
+/* The shaded banner is fixed-grid artwork: JetBrains Mono, one ink colour (the theme's text). */
 .ascii {
-	font-family: var(--font-mono);
+	font-family: var(--font-ascii);
 	font-weight: 400;
 	white-space: pre;
 	letter-spacing: 0;
 	line-height: 1.2;
-	/* JetBrains Mono ligatures would merge "->", "::" and "==" and break the grid. */
+	/* Ligatures would merge "->", "::" and "==" and break the grid. */
 	font-variant-ligatures: none;
 	font-feature-settings: "liga" 0, "calt" 0;
 	user-select: none;
-	color: var(--color-art);
+	color: var(--fg);
 }
 
 /* Reveal overlay: the real text stays in place (and in the accessibility tree) but is painted
@@ -40,6 +41,9 @@ time.reveal {
 	/* Only the real text underneath is selectable/copyable. */
 	user-select: none;
 	font-variant-ligatures: none;
+	/* Noise glyphs differ in width from the real ones in a proportional face; never let a
+	   transient extra wrapped line paint over the element below. */
+	overflow: clip;
 }
 
 html[data-motion="on"] .reveal__text {
@@ -77,22 +81,29 @@ html[data-motion="on"] [data-ascii][data-inview] {
 	}
 }
 
-/* Small bracketed mono controls: [ motion: on ], [ replay ]. Text only, no icons or outlines. */
+/* Button: 2px outline, square, mono micro label; hover inverts. */
 .text-button {
 	appearance: none;
-	background: none;
-	border: 0;
-	padding: 0.25em 0;
+	background: transparent;
+	border: var(--border) solid var(--rule);
+	padding: var(--space-2) var(--space-3);
 	margin: 0;
-	font: inherit;
 	font-family: var(--font-mono);
-	font-size: var(--step--1);
-	color: var(--color-fg-muted);
+	font-size: var(--text-micro);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--fg);
 	cursor: pointer;
-	font-variant-ligatures: none;
 }
 
-.text-button:hover,
+.text-button:hover {
+	background: var(--inv-bg);
+	color: var(--inv-fg);
+}
+
 .text-button[aria-pressed="true"] {
-	color: var(--color-accent);
+	background: var(--accent);
+	color: var(--on-accent);
+	border-color: var(--on-accent);
 }

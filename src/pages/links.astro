@@ -20,7 +20,7 @@ const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
 ---
 
 <BaseLayout title="Links" description={`Where to find ${site.name}.`} animated>
-	<section class="container section section--wide">
+	<section class="container section section--wide section--split">
 		<SectionHead label="ls links/" title="Links" />
 		<dl class="links">
 			{
@@ -38,7 +38,7 @@ const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
 		</dl>
 	</section>
 
-	<section class="container section" aria-labelledby="pgp">
+	<section class="container section section--split" aria-labelledby="pgp">
 		<SectionHead label="gpg --fingerprint" title="OpenPGP key" id="pgp" />
 		{
 			pgp && pgp.fingerprint ? (
@@ -65,29 +65,61 @@ const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
 <style>
 	.links {
 		margin: 0;
-		display: grid;
-		gap: var(--space-2);
+		border-top: var(--border) solid var(--rule);
 	}
 
 	.links__row {
 		display: grid;
 		grid-template-columns: 11ch 1fr;
-		gap: var(--space-3);
+		gap: var(--space-4);
 		align-items: baseline;
+		padding: var(--space-3);
+		border-bottom: var(--hairline) solid var(--hair);
+	}
+
+	.links__row:hover {
+		background: var(--accent);
+		color: var(--on-accent);
+	}
+
+	.links__row:hover :focus-visible {
+		outline-color: var(--on-accent);
+	}
+
+	.links__row:hover .meta {
+		color: var(--on-accent);
 	}
 
 	.links dd {
 		margin: 0;
-		font-family: var(--font-mono);
-		font-size: var(--step-1);
+		font-size: var(--text-h2);
+		font-weight: 600;
+		letter-spacing: -0.02em;
 		overflow-wrap: anywhere;
 	}
 
+	.links dd a {
+		color: inherit;
+	}
+
+	.links dd a:hover {
+		background: transparent;
+		text-decoration: underline;
+		text-decoration-thickness: var(--border);
+	}
+
+	.pgp {
+		padding: var(--space-4);
+		border: var(--border) solid var(--rule);
+		background: var(--surface);
+	}
+
 	.pgp__fpr {
-		font-size: var(--step-1);
-		letter-spacing: 0.04em;
+		font-size: var(--text-h2);
+		letter-spacing: 0.02em;
 		max-width: 30ch;
-		margin-bottom: var(--space-2);
+		margin-bottom: var(--space-3);
+		overflow-wrap: anywhere;
 	}
 
 	@media (max-width: 40rem) {

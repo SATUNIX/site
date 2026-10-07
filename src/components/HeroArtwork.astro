@@ -33,14 +33,18 @@ const { art, artCompact } = heroBanner(text);
 
 <style>
 	.hero {
-		padding-block: var(--space-4) var(--space-5);
+		padding-block: var(--space-6) var(--space-6);
+		border-bottom: var(--border) solid var(--rule);
 	}
 
 	.hero__eyebrow {
 		font-family: var(--font-mono);
-		font-size: var(--step--1);
-		color: var(--color-fg-muted);
-		margin-bottom: var(--space-3);
+		font-size: var(--text-micro);
+		font-weight: 500;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: var(--muted);
+		margin-bottom: var(--space-5);
 	}
 
 	/* The banner scales to fit its column count exactly: JetBrains Mono advances 0.6em per glyph,

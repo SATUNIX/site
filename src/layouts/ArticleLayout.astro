@@ -31,7 +31,7 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 		{
 			wip && (
 				<p class="article__wip mono" role="note">
-					[ draft ] Work in progress: an outline with working notes. The finished post will
+					Draft. Work in progress: an outline with working notes. The finished post will
 					replace it.
 				</p>
 			)
@@ -60,34 +60,51 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 
 <style>
 	.article {
-		padding-block: var(--space-4) var(--space-5);
+		padding-block: var(--space-6) var(--space-7);
 	}
 
+	/* Draft notice: a ruled callout, words first. */
 	.article__wip {
 		max-width: var(--measure);
-		margin-bottom: var(--space-3);
-		font-size: var(--step--1);
-		color: var(--color-accent);
+		margin-bottom: var(--space-5);
+		padding: var(--space-3) var(--space-4);
+		background: var(--surface);
+		border: var(--border) solid var(--rule);
+		font-size: var(--text-micro);
+		font-weight: 500;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		line-height: 1.7;
 	}
 
 	.article__head {
-		max-width: var(--measure);
-		margin-bottom: var(--space-4);
+		max-width: calc(var(--measure) + 12ch);
+		margin-bottom: var(--space-6);
+		padding-bottom: var(--space-5);
+		border-bottom: var(--border) solid var(--rule);
 	}
 
 	.article__title {
-		font-size: var(--step-3);
-		margin-top: var(--space-2);
+		font-size: var(--text-section);
+		margin-top: var(--space-3);
+		overflow-wrap: anywhere;
 	}
 
 	.article__dek {
-		font-size: var(--step-1);
+		font-size: var(--text-h2);
 		line-height: 1.4;
-		margin-top: var(--space-2);
+		margin-top: var(--space-4);
+		max-width: var(--measure);
 	}
 
 	.article__back {
-		margin-top: var(--space-5);
-		font-size: var(--step--1);
+		margin-top: var(--space-7);
+		font-size: var(--text-small);
+	}
+
+	@media print {
+		.article {
+			padding-block: 1rem;
+		}
 	}
 </style>
