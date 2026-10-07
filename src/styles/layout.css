@@ -23,6 +23,11 @@
 	border-bottom: var(--border) solid var(--rule);
 }
 
+/* The footer draws its own top rule; the last band must not double it. */
+.page__main > .section:last-child {
+	border-bottom: 0;
+}
+
 .section--tight {
 	padding-block: var(--space-5);
 }
@@ -148,7 +153,7 @@
 	padding: var(--space-2) var(--space-3);
 	background: var(--accent);
 	color: var(--on-accent);
-	border: var(--border) solid var(--ink);
+	border: var(--border) solid var(--on-accent);
 	font-family: var(--font-mono);
 	font-size: var(--text-micro);
 	font-weight: 600;
@@ -179,6 +184,12 @@
 
 .site-footer a {
 	color: var(--fg);
+}
+
+.site-footer a:hover {
+	background: var(--accent);
+	color: var(--on-accent);
+	text-decoration: none;
 }
 
 .muted {

@@ -25,12 +25,15 @@
 	--code-bg: #000000;
 	--code-fg: #ecece9;
 	--code-dim: #8e8e8e;
+	--code-hl: #c4ff0d;
 	--inv-bg: #000000;
 	--inv-fg: #ecece9;
 	--success: #005f73;
 	--warning: #9a4f00;
 	--danger: #c41e00;
 	--on-signal: #ffffff;
+
+	color-scheme: light dark;
 
 	/* Type */
 	--font-sans: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -81,6 +84,7 @@
 		--muted: #a3a39d;
 		--rule: #ecece9;
 		--hair: rgba(236, 236, 234, 0.25);
+		color-scheme: dark;
 		--surface: #111111;
 		--link: #c4ff0d;
 		--focus: #c4ff0d;
@@ -100,6 +104,7 @@
 	--muted: #a3a39d;
 	--rule: #ecece9;
 	--hair: rgba(236, 236, 234, 0.25);
+	color-scheme: dark;
 	--surface: #111111;
 	--link: #c4ff0d;
 	--focus: #c4ff0d;
@@ -110,4 +115,8 @@
 	--warning: #ffb020;
 	--danger: #ff6a4d;
 	--on-signal: #000000;
+}
+
+:root[data-theme="light"] {
+	color-scheme: light;
 }

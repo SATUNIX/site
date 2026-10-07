@@ -75,7 +75,7 @@
 .prose .token.tag,
 .prose .token.attr-name,
 .prose .token.inserted {
-	color: var(--lime);
+	color: var(--code-hl);
 }
 
 .prose .token.function,

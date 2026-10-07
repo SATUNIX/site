@@ -105,6 +105,10 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 		font-size: var(--text-small);
 	}
 
+	.post-list__item:hover :focus-visible {
+		outline-color: var(--on-accent);
+	}
+
 	@media (max-width: 40rem) {
 		.post-list__item {
 			grid-template-columns: 1fr;

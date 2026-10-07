@@ -82,6 +82,10 @@ const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
 		color: var(--on-accent);
 	}
 
+	.links__row:hover :focus-visible {
+		outline-color: var(--on-accent);
+	}
+
 	.links__row:hover .meta {
 		color: var(--on-accent);
 	}

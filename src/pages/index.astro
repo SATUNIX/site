@@ -11,7 +11,6 @@ import { getPublishedPosts } from "@/lib/posts";
 import { path } from "@/lib/url";
 
 const recent = (await getPublishedPosts()).slice(0, 3);
-const keyWidth = Math.max(...profile.facts.map((f) => f.key.length));
 const areas = profile.areas.map((area) => ({ ...area, href: path(area.page) }));
 const routes = [
 	{ cmd: "ls work/", href: path("work/"), note: "representative engagement types" },
@@ -43,7 +42,7 @@ const routes = [
 				{
 					profile.facts.map((fact) => (
 						<div class="readout__row">
-							<dt>{fact.key.padEnd(keyWidth, " ")}</dt>
+							<dt>{fact.key}</dt>
 							<dd>
 								{fact.value ? (
 									<RevealText preset="label" text={fact.value} />
@@ -115,7 +114,7 @@ const routes = [
 		margin: 0;
 		padding: 0;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		grid-template-columns: repeat(3, minmax(0, 1fr));
 		border: var(--border) solid var(--rule);
 	}
 
@@ -261,9 +260,10 @@ const routes = [
 		font-family: var(--font-mono);
 	}
 
-	@media (max-width: 48rem) {
-		.about__grid {
-			grid-template-columns: 1fr;
+	/* The body column is narrow beside the head column; stack the tiles before they crowd. */
+	@media (max-width: 70rem) {
+		.areas {
+			grid-template-columns: minmax(0, 1fr);
 		}
 
 		.area {
@@ -274,9 +274,23 @@ const routes = [
 		.area:last-child {
 			border-bottom: 0;
 		}
+	}
 
+	@media (max-width: 56.25rem) {
+		.about__grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 48rem) {
 		.routes a {
 			font-size: var(--text-body);
 		}
+	}
+
+	/* The focus ring is lime in the dark theme: on a lime hover surface it must flip to black. */
+	.area:hover :focus-visible,
+	.routes li:hover :focus-visible {
+		outline-color: var(--on-accent);
 	}
 </style>

@@ -101,4 +101,10 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 		margin-top: var(--space-7);
 		font-size: var(--text-small);
 	}
+
+	@media print {
+		.article {
+			padding-block: 1rem;
+		}
+	}
 </style>

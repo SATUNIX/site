@@ -41,6 +41,9 @@ time.reveal {
 	/* Only the real text underneath is selectable/copyable. */
 	user-select: none;
 	font-variant-ligatures: none;
+	/* Noise glyphs differ in width from the real ones in a proportional face; never let a
+	   transient extra wrapped line paint over the element below. */
+	overflow: clip;
 }
 
 html[data-motion="on"] .reveal__text {
@@ -102,5 +105,5 @@ html[data-motion="on"] [data-ascii][data-inview] {
 .text-button[aria-pressed="true"] {
 	background: var(--accent);
 	color: var(--on-accent);
-	border-color: var(--ink);
+	border-color: var(--on-accent);
 }
