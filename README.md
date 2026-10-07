@@ -117,7 +117,7 @@ Markdown here. Put images next to the post and link them relatively: ![alt](./im
 Two front-matter flags control publishing:
 
 - `draft: true`: visible in `npm run dev` only; never built for production.
-- `wip: true`: published but labelled `[ draft ]`, `noindex`ed and kept out of RSS.
+- `wip: true`: published but labelled "Draft", `noindex`ed and kept out of RSS.
 
 The current posts are `wip` outlines. To finish one, fill in its `[TODO]` markers, set a real
 `pubDate` and remove `wip: true` (`grep -rn TODO src/content/blog` lists what is left).
