@@ -1,57 +1,113 @@
-/* Design tokens. The single place colours, type scale, spacing and motion live.
-   Components reference var(--...) only; no literal colours elsewhere.
-   Dark mode only. No borders, dividers, card outlines or shadows anywhere. */
+/* Design tokens: the Proof design system (paper and ink, 2px rules, square corners, one lime accent).
+   Components reference the semantic names below only (--bg, --fg, --rule, --accent ...); the raw
+   palette is for brand art. Light is the default; dark is a full remap and follows the OS setting,
+   or is forced with <html data-theme="dark"> / "light". No shadows, gradients or rounded corners. */
 
 :root {
-	/* Colour */
-	--color-bg: #161616;
-	--color-fg: #f5f5f5;
-	--color-fg-muted: #9a9a9a;
-	--color-accent: #c2fe0b;
-	--color-code-bg: #1b1b1b;
-	--color-code-band: #222222;
-	/* Grayscale ink for ASCII artwork: a touch below --color-fg so dense glyph fields don't glare. */
-	--color-art: #cfcfcf;
-	/* Syntax highlighting (Prism token classes, styled in prose.css). */
-	--syntax-comment: #8b949e;
-	--syntax-keyword: #ff7b72;
-	--syntax-string: #a5d6ff;
-	--syntax-constant: #79c0ff;
-	--syntax-function: #d2a8ff;
-	--syntax-variable: #ffa657;
-	--syntax-tag: #7ee787;
+	/* Raw palette: fixed across themes. */
+	--paper: #ecece9;
+	--ink: #000000;
+	--lime: #c4ff0d;
+	--violet: #4f00ff;
+	--gray: #8e8e8e;
+
+	/* Semantic colour: light theme. */
+	--bg: #ecece9;
+	--fg: #000000;
+	--muted: #55554f;
+	--rule: #000000;
+	--hair: rgba(0, 0, 0, 0.2);
+	--surface: #f5f5f3;
+	--accent: #c4ff0d;
+	--on-accent: #000000;
+	--link: #4f00ff;
+	--focus: #4f00ff;
+	--code-bg: #000000;
+	--code-fg: #ecece9;
+	--code-dim: #8e8e8e;
+	--inv-bg: #000000;
+	--inv-fg: #ecece9;
+	--success: #005f73;
+	--warning: #9a4f00;
+	--danger: #c41e00;
+	--on-signal: #ffffff;
 
 	/* Type */
-	--font-sans: Helvetica, Arial, sans-serif;
-	--font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-	--step--1: 0.875rem;
-	--step-0: 1rem;
-	--step-1: 1.25rem;
-	--step-2: 1.75rem;
-	--step-3: 2.5rem;
-	--step-4: clamp(3rem, 8vw, 6rem);
-	--hero-font-size: clamp(1.5rem, 3vw, 3rem);
+	--font-sans: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	--font-mono: "Martian Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	/* The shaded ASCII banners (hero, 404) are laid out on a fixed 0.6em advance, which this face
+	   has; every other mono label uses Martian Mono. */
+	--font-ascii: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	--text-micro: 0.6875rem; /* 11px: labels, nav, buttons, tags, metadata (uppercase, mono) */
+	--text-code: 0.78125rem; /* 12.5px */
+	--text-small: 0.8125rem; /* 13px */
+	--text-body: 1rem; /* 16px */
+	--text-h2: 1.25rem; /* 20px */
+	--text-h1: 1.75rem; /* 28px */
+	--text-section: clamp(2rem, 4.4vw, 3.5rem); /* 32px to 56px */
+	--text-display: clamp(3rem, 12vw, 7.5rem);
 
-	/* Space */
-	--space-1: 0.5rem;
-	--space-2: 1rem;
-	--space-3: 2rem;
-	--space-4: 4rem;
-	--space-5: 8rem;
-	--space-6: clamp(6rem, 18vh, 14rem);
+	/* Space: 4, 8, 16, 24, 40, 64, 96. */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 1rem;
+	--space-4: 1.5rem;
+	--space-5: 2.5rem;
+	--space-6: 4rem;
+	--space-7: 6rem;
+
+	/* Lines and shape */
+	--border: 2px;
+	--hairline: 1px;
+	--nav-height: 52px;
+	--radius: 0;
+	--opacity-disabled: 0.4;
 
 	/* Layout */
-	--measure: 66ch;
-	--content-max: 72rem;
-	--gutter: clamp(1rem, 5vw, 4rem);
+	--measure: 64ch;
+	--content-max: 80rem;
+	--gutter: clamp(1rem, 4vw, 2.5rem);
 
-	/* Motion */
-	--dur-fast: 180ms;
-	--dur-mid: 320ms;
+	/* Motion: only the ASCII effects move; interaction states never transition. */
 	--dur-slow: 600ms;
-	--dur-artwork: 1800ms;
 	--ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
-	--ease-inout: cubic-bezier(0.65, 0.05, 0.36, 1);
-	--ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
-	--radius: 0;
+}
+
+/* Dark theme: black ground, paper text, lime links and focus. */
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--bg: #000000;
+		--fg: #ecece9;
+		--muted: #a3a39d;
+		--rule: #ecece9;
+		--hair: rgba(236, 236, 234, 0.25);
+		--surface: #111111;
+		--link: #c4ff0d;
+		--focus: #c4ff0d;
+		--code-bg: #111111;
+		--inv-bg: #ecece9;
+		--inv-fg: #000000;
+		--success: #4dd6e8;
+		--warning: #ffb020;
+		--danger: #ff6a4d;
+		--on-signal: #000000;
+	}
+}
+
+:root[data-theme="dark"] {
+	--bg: #000000;
+	--fg: #ecece9;
+	--muted: #a3a39d;
+	--rule: #ecece9;
+	--hair: rgba(236, 236, 234, 0.25);
+	--surface: #111111;
+	--link: #c4ff0d;
+	--focus: #c4ff0d;
+	--code-bg: #111111;
+	--inv-bg: #ecece9;
+	--inv-fg: #000000;
+	--success: #4dd6e8;
+	--warning: #ffb020;
+	--danger: #ff6a4d;
+	--on-signal: #000000;
 }

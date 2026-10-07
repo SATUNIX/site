@@ -8,7 +8,7 @@ Personal site and CV of Tony: offensive security and security engineering.
 
 **Live:** <https://satunix.github.io/site/>
 
-A dark, minimal, editorial site with animated ASCII type. It is a fully static
+A site built on the Proof design system (paper and ink, 2px rules, one lime accent; light by default, dark by OS setting) with animated ASCII type. It is a fully static
 [Astro](https://astro.build) build with no framework runtime, no CSS framework and no backend.
 The animation engine is written from scratch, framework-free and unit tested, ships about
 3 KB of gzipped JavaScript, and loads only on pages that use it.
@@ -77,7 +77,7 @@ src/
   lib/                  base-path URLs, CSP hashing, Markdown twins, posts, PGP, hero geometry
   scripts/ascii/        animation engine (framework-free, unit tested)
   styles/               tokens, base, layout, prose, ascii, print
-  assets/fonts/         JetBrains Mono (OFL-1.1), fingerprinted by the bundler
+  assets/fonts/         Archivo, Martian Mono and JetBrains Mono (ASCII art only), all OFL-1.1, fingerprinted by the bundler
 scripts/                build-time fingerprint derivation, offline site checks
 .github/                CI and deploy, CodeQL, Dependabot
 ```
@@ -201,5 +201,5 @@ that origin and `base` to `""`; nothing else needs to change.
 ## License
 
 The source code is [MIT](LICENSE). The written and personal content (`src/content/`,
-`src/data/`, `public/keys/`) is all rights reserved. JetBrains Mono is under the SIL Open Font
+`src/data/`, `public/keys/`) is all rights reserved. Archivo, Martian Mono and JetBrains Mono are under the SIL Open Font
 License 1.1.

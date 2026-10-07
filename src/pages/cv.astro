@@ -110,35 +110,47 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 <style>
 	.cv {
-		padding-block: var(--space-4) var(--space-5);
-		max-width: calc(var(--measure) + 14ch + 2 * var(--gutter));
+		padding-block: var(--space-6) var(--space-7);
+	}
+
+	.cv__head,
+	.cv__section {
+		max-width: calc(var(--measure) + 18ch + var(--space-4));
+	}
+
+	.cv__head {
+		padding-bottom: var(--space-5);
+		border-bottom: var(--border) solid var(--rule);
 	}
 
 	.cv__name {
-		font-size: var(--step-4);
+		font-size: var(--text-display);
+		line-height: 0.9;
+		letter-spacing: -0.05em;
+		text-transform: uppercase;
 		overflow-wrap: anywhere;
-		margin-block: var(--space-2) var(--space-3);
+		margin-block: var(--space-3) var(--space-4);
 	}
 
 	.cv__summary {
-		font-size: var(--step-1);
-		line-height: 1.5;
+		font-size: var(--text-h2);
+		line-height: 1.45;
 		max-width: var(--measure);
 	}
 
 	.cv__note {
-		margin-top: var(--space-2);
+		margin-top: var(--space-3);
 	}
 
 	.cv__section {
-		margin-top: var(--space-5);
+		margin-top: var(--space-6);
 	}
 
 	.cv__caps {
 		margin: 0;
 		padding-left: 1.25em;
 		columns: 2 22rem;
-		column-gap: var(--space-4);
+		column-gap: var(--space-5);
 	}
 
 	.cv__caps li {
@@ -146,14 +158,18 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		padding-block: 0.2em;
 	}
 
+	/* Section label: mono micro on a 2px rule. */
 	.cv__label {
 		font-family: var(--font-mono);
-		font-size: var(--step--1);
-		font-weight: 400;
+		font-size: var(--text-micro);
+		font-weight: 600;
+		letter-spacing: 0.02em;
+		line-height: 1.5;
 		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: var(--color-fg-muted);
-		margin-bottom: var(--space-3);
+		color: var(--fg);
+		padding-bottom: var(--space-2);
+		margin-bottom: var(--space-4);
+		border-bottom: var(--border) solid var(--rule);
 	}
 
 	.cv__list {
@@ -165,29 +181,37 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 	.cv__item {
 		display: grid;
 		grid-template-columns: 18ch 1fr;
-		gap: var(--space-1) var(--space-3);
-		padding-block: var(--space-2);
+		gap: var(--space-2) var(--space-4);
+		padding-block: var(--space-4);
+		border-bottom: var(--hairline) solid var(--hair);
 		break-inside: avoid;
 	}
 
 	.cv__period {
-		padding-top: 0.3em;
+		padding-top: 0.4em;
 	}
 
 	.cv__role {
-		font-size: var(--step-1);
+		font-size: var(--text-h2);
+		line-height: 1.2;
 	}
 
 	.cv__points {
-		margin-top: var(--space-1);
+		margin-top: var(--space-2);
 		padding-left: 1.25em;
 		max-width: var(--measure);
 	}
 
 	.cv__skills {
 		display: grid;
-		gap: var(--space-2);
+		gap: var(--space-3);
 		margin: 0;
+	}
+
+	.cv__skills > div {
+		display: grid;
+		grid-template-columns: 18ch 1fr;
+		gap: var(--space-2) var(--space-4);
 	}
 
 	.cv__skills dd {
@@ -195,12 +219,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 	}
 
 	@media (max-width: 40rem) {
-		.cv__item {
+		.cv__item,
+		.cv__skills > div {
 			grid-template-columns: 1fr;
 		}
 
 		.cv__summary {
-			font-size: var(--step-0);
+			font-size: var(--text-body);
 		}
 	}
 

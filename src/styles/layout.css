@@ -1,5 +1,5 @@
-/* Layout primitives: page frame, vertical rhythm, header/footer and utilities.
-   Sections are separated by space alone: no rules, borders or dividers. */
+/* Layout primitives: the page is a stack of full-width bands separated by 2px rules
+   (topbar, hero, sections, footer). Content inside a band is held to --content-max. */
 
 .page {
 	display: flex;
@@ -12,82 +12,131 @@
 	width: 100%;
 }
 
+/* A full-width band whose content is centred and capped: padding grows with the viewport. */
 .container {
 	width: 100%;
-	max-width: var(--content-max);
-	margin-inline: auto;
-	padding-inline: var(--gutter);
+	padding-inline: max(var(--gutter), calc((100% - var(--content-max)) / 2 + var(--gutter)));
 }
 
 .section {
-	padding-block: var(--space-4);
+	padding-block: var(--space-6);
+	border-bottom: var(--border) solid var(--rule);
 }
 
 .section--tight {
-	padding-block: var(--space-3);
+	padding-block: var(--space-5);
 }
 
 .section--wide {
-	padding-block: var(--space-6);
+	padding-block: var(--space-6) var(--space-7);
+}
+
+/* Section: a narrow head column beside a body 2.6 times wider; one column under 900px. */
+.section--split {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr);
+	column-gap: var(--space-5);
+	align-items: start;
+}
+
+.section--split > * {
+	grid-column: 2;
+	min-width: 0;
+}
+
+.section--split > .section-head {
+	grid-column: 1;
+	grid-row: 1 / span 12;
+}
+
+@media (max-width: 56.25rem) {
+	.section--split {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.section--split > *,
+	.section--split > .section-head {
+		grid-column: 1;
+		grid-row: auto;
+	}
 }
 
 .stack > * + * {
-	margin-top: var(--space-2);
+	margin-top: var(--space-3);
 }
 
 .stack--loose > * + * {
-	margin-top: var(--space-3);
+	margin-top: var(--space-4);
 }
 
 .cluster {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: baseline;
-	gap: var(--space-2);
+	gap: var(--space-3);
 }
 
+/* Topbar: wordmark left, nav right, one 2px rule underneath. */
 .site-header {
-	padding-block: var(--space-3);
+	border-bottom: var(--border) solid var(--rule);
+	background: var(--bg);
 }
 
 .site-header__inner {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: baseline;
+	align-items: stretch;
 	justify-content: space-between;
-	gap: var(--space-2);
+	min-height: var(--nav-height);
 }
 
 .site-header__name {
-	font-size: var(--step-1);
-	font-weight: 700;
-	color: var(--color-fg);
-}
-
-.site-header__name:hover {
-	color: var(--color-accent);
+	display: flex;
+	align-items: center;
+	padding-block: var(--space-2);
+	font-family: var(--font-mono);
+	font-size: var(--text-micro);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+	color: var(--fg);
 	text-decoration: none;
 }
 
-/* Nav items are bracketed text buttons, "[ writing ]", matching the site's other controls. */
 .site-nav {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--space-1) var(--space-2);
+	align-items: stretch;
 	font-family: var(--font-mono);
-	font-size: var(--step--1);
-	font-variant-ligatures: none;
+	font-size: var(--text-micro);
+	font-weight: 500;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
 }
 
 .site-nav a {
-	color: var(--color-fg-muted);
-	white-space: pre;
-	padding-block: 0.25em;
+	display: flex;
+	align-items: center;
+	padding: var(--space-2) var(--space-3);
+	color: var(--fg);
+	text-decoration: none;
+	white-space: nowrap;
 }
 
-.site-nav a:hover,
+/* Hover points at the item; the current page is inverted, like a selected tab. */
+.site-nav a:hover {
+	background: var(--accent);
+	color: var(--on-accent);
+}
+
 .site-nav a[aria-current="page"] {
-	color: var(--color-accent);
+	background: var(--inv-bg);
+	color: var(--inv-fg);
+}
+
+.site-header__name:hover {
+	background: var(--accent);
+	color: var(--on-accent);
 	text-decoration: none;
 }
 
@@ -96,41 +145,56 @@
 	left: var(--gutter);
 	top: -100%;
 	z-index: 10;
-	padding: var(--space-1) var(--space-2);
-	background: var(--color-bg);
+	padding: var(--space-2) var(--space-3);
+	background: var(--accent);
+	color: var(--on-accent);
+	border: var(--border) solid var(--ink);
 	font-family: var(--font-mono);
+	font-size: var(--text-micro);
+	font-weight: 600;
+	text-transform: uppercase;
+	text-decoration: none;
 }
 
 .skip-link:focus {
-	top: var(--space-1);
+	top: var(--space-2);
+}
+
+.site-footer {
+	border-top: var(--border) solid var(--rule);
+	padding-block: var(--space-4);
+	color: var(--muted);
+	font-family: var(--font-mono);
+	font-size: var(--text-micro);
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
 }
 
 .site-footer__inner {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: baseline;
-	gap: var(--space-1) var(--space-3);
+	align-items: center;
+	gap: var(--space-2) var(--space-5);
 }
 
-.site-footer {
-	padding-block: var(--space-4);
-	color: var(--color-fg-muted);
-	font-family: var(--font-mono);
-	font-size: var(--step--1);
+.site-footer a {
+	color: var(--fg);
 }
 
 .muted {
-	color: var(--color-fg-muted);
+	color: var(--muted);
 }
 
 .mono {
 	font-family: var(--font-mono);
+	font-size: var(--text-small);
 }
 
 .unconfigured {
 	font-family: var(--font-mono);
-	font-size: var(--step--1);
-	color: var(--color-fg-muted);
+	font-size: var(--text-micro);
+	text-transform: uppercase;
+	color: var(--muted);
 }
 
 /* Accessibility: available to assistive tech, not visually rendered. */

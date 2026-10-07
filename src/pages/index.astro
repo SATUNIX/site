@@ -25,7 +25,7 @@ const routes = [
 <BaseLayout animated canonical="/" inlineCss={heroBanner(site.name).css}>
 	<HeroArtwork />
 
-	<section class="container section about" aria-labelledby="about">
+	<section class="container section section--split about" aria-labelledby="about">
 		<SectionHead index="01" label="about" title="Hello." id="about" />
 		<div class="about__grid">
 			<div class="about__intro prose">
@@ -58,7 +58,7 @@ const routes = [
 		</div>
 	</section>
 
-	<section class="container section" aria-labelledby="areas">
+	<section class="container section section--split" aria-labelledby="areas">
 		<SectionHead index="02" label="scope" title="Security. Systems. Software." id="areas" />
 		<ol class="areas" role="list">
 			{
@@ -77,13 +77,13 @@ const routes = [
 		</ol>
 	</section>
 
-	<section class="container section" aria-labelledby="writing">
+	<section class="container section section--split" aria-labelledby="writing">
 		<SectionHead index="03" label="writing" title="Recent writing" id="writing" />
 		<PostList posts={recent} emptyLabel="First posts are in draft. Check back soon." />
 		<p class="more mono"><a href={path("blog/")}>ls writing/ --all</a></p>
 	</section>
 
-	<section class="container section section--wide" aria-labelledby="elsewhere">
+	<section class="container section section--wide section--split" aria-labelledby="elsewhere">
 		<SectionHead index="04" label="index" title="Find your way around" id="elsewhere" />
 		<ul class="routes" role="list">
 			{
@@ -105,101 +105,159 @@ const routes = [
 	.about__grid {
 		display: grid;
 		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-		gap: var(--space-4);
+		gap: var(--space-5);
 		align-items: start;
 	}
 
+	/* Scope: three ruled tiles that invert to the accent on hover. */
 	.areas {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-		gap: var(--space-4) var(--space-3);
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		border: var(--border) solid var(--rule);
+	}
+
+	.area {
+		padding: var(--space-4);
+		background: var(--surface);
+		border-right: var(--border) solid var(--rule);
+	}
+
+	.area:last-child {
+		border-right: 0;
+	}
+
+	.area:hover {
+		background: var(--accent);
+		color: var(--on-accent);
+	}
+
+	.area:hover .meta,
+	.area:hover .area__text {
+		color: var(--on-accent);
 	}
 
 	.area__name {
-		font-size: var(--step-2);
-		margin-block: var(--space-1);
+		font-size: var(--text-h1);
+		margin-block: var(--space-3);
 	}
 
 	.area__name a {
-		color: var(--color-fg);
-	}
-
-	.area__name a:hover {
-		color: var(--color-accent);
+		color: inherit;
 		text-decoration: none;
 	}
 
+	.area__name a:hover {
+		background: transparent;
+		text-decoration: underline;
+		text-decoration-thickness: var(--border);
+		text-underline-offset: 0.15em;
+	}
+
 	.area__text {
+		font-size: var(--text-small);
 		line-height: 1.6;
 	}
 
+	/* Key information: a ruled readout, label left, value right. */
 	.readout {
 		margin: 0;
-		font-family: var(--font-mono);
-		font-size: var(--step--1);
-		font-variant-ligatures: none;
+		border: var(--border) solid var(--rule);
+		background: var(--surface);
 	}
 
 	.readout__row {
-		display: flex;
-		gap: 2ch;
-		padding-block: 0.2em;
+		display: grid;
+		grid-template-columns: 11ch 1fr;
+		gap: var(--space-3);
+		padding: var(--space-3);
+		border-top: var(--hairline) solid var(--hair);
+	}
+
+	.readout__row:first-child {
+		border-top: 0;
 	}
 
 	.readout dt {
-		white-space: pre;
-		color: var(--color-fg-muted);
-	}
-
-	.readout dt::after {
-		content: " :";
+		white-space: normal;
+		font-family: var(--font-mono);
+		font-size: var(--text-micro);
+		font-weight: 500;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
+		color: var(--muted);
+		padding-top: 0.2em;
 	}
 
 	.readout dd {
 		margin: 0;
-		color: var(--color-fg);
+		font-size: var(--text-small);
+		overflow-wrap: anywhere;
 	}
 
 	.readout__unset {
-		color: var(--color-fg-muted);
-		opacity: 0.6;
+		color: var(--muted);
 	}
 
 	.more {
-		margin-top: var(--space-3);
-		font-size: var(--step--1);
+		margin-top: var(--space-4);
+		font-size: var(--text-small);
 	}
 
+	/* Index: rows divided by hairlines; hover inverts the whole row. */
 	.routes {
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		display: grid;
-		gap: var(--space-3);
+		border-top: var(--border) solid var(--rule);
 	}
 
 	.routes li {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: baseline;
-		gap: var(--space-1) var(--space-3);
+		justify-content: space-between;
+		gap: var(--space-2) var(--space-4);
+		padding: var(--space-3);
+		border-bottom: var(--hairline) solid var(--hair);
+	}
+
+	.routes li:hover {
+		background: var(--accent);
+		color: var(--on-accent);
+	}
+
+	.routes li:hover .routes__note,
+	.routes li:hover .routes__prompt {
+		color: var(--on-accent);
 	}
 
 	.routes a {
 		font-family: var(--font-mono);
-		font-size: var(--step-2);
-		font-variant-ligatures: none;
+		font-size: var(--text-h2);
+		font-weight: 500;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.routes a:hover {
+		background: transparent;
+		text-decoration: underline;
+		text-decoration-thickness: var(--border);
+		text-underline-offset: 0.2em;
 	}
 
 	.routes__prompt {
-		color: var(--color-fg-muted);
+		color: var(--muted);
 	}
 
 	.routes__note {
-		font-size: var(--step--1);
+		font-size: var(--text-micro);
+		font-weight: 500;
+		letter-spacing: 0.02em;
+		text-transform: uppercase;
 		font-family: var(--font-mono);
 	}
 
@@ -208,8 +266,17 @@ const routes = [
 			grid-template-columns: 1fr;
 		}
 
+		.area {
+			border-right: 0;
+			border-bottom: var(--border) solid var(--rule);
+		}
+
+		.area:last-child {
+			border-bottom: 0;
+		}
+
 		.routes a {
-			font-size: var(--step-1);
+			font-size: var(--text-body);
 		}
 	}
 </style>
