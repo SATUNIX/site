@@ -6,7 +6,7 @@ import { COLD, DotField, PULSE_SPEED, WAVE_AHEAD, WAVE_BEHIND, waveProfile } fro
 import { PixelFill } from "./fill";
 import { advanceOf, measure, PIXEL_EM } from "./metrics";
 import { isShape, nearestShape, nextShape, SHAPE_NAMES, SHAPES, wrapElsh } from "./shapes";
-import { commonPrefix, complete, execute, type ShellData } from "./shell";
+import { commonPrefix, complete, dirKey, execute, resolveDir, type ShellData } from "./shell";
 
 describe("shapes", () => {
 	it("maps every shape to a distinct axis value inside [0, 100)", () => {
@@ -205,6 +205,24 @@ describe("shell", () => {
 		expect(execute("pwd", data).lines[0].text).toBe("~/work/");
 		expect(execute("frobnicate", data).lines[0].text).toContain("command not found");
 		expect(execute("help", data).lines.length).toBeGreaterThan(5);
+	});
+
+	it("reduces typed paths to a bare name", () => {
+		expect(dirKey("work")).toBe("work");
+		expect(dirKey("./work/")).toBe("work");
+		expect(dirKey("~/Work")).toBe("work");
+		expect(dirKey("//work//")).toBe("work");
+		expect(dirKey("/")).toBe("");
+		expect(resolveDir("~/projects/", data)?.name).toBe("lab/");
+	});
+
+	it("stays linear on long runs of slashes (no regex backtracking)", () => {
+		// A /\/+$/ regex takes tens of seconds on this input; the loops take a few milliseconds.
+		const hostile = `a${"/".repeat(200_000)}x`;
+		const started = performance.now();
+		expect(resolveDir(hostile, data)).toBeUndefined();
+		expect(execute(`ls ${hostile}`, data).lines[0].tone).toBe("err");
+		expect(performance.now() - started).toBeLessThan(250);
 	});
 
 	it("completes commands and arguments", () => {

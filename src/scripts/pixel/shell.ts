@@ -76,9 +76,22 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 const err = (text: string): Result => ({ lines: [{ text, tone: "err" }] });
 
+/**
+ * A typed path reduced to a bare name: "./work/", "~/work" and "/work//" all become "work".
+ * Plain loops rather than regexes, because this runs on whatever is typed or pasted into the
+ * shell and a trailing-run pattern like /\/+$/ takes quadratic time on a long run of slashes.
+ */
+export function dirKey(arg: string): string {
+	let start = arg.startsWith("./") || arg.startsWith("~/") ? 2 : 0;
+	let end = arg.length;
+	while (start < end && arg[start] === "/") start++;
+	while (end > start && arg[end - 1] === "/") end--;
+	return arg.slice(start, end).toLowerCase();
+}
+
 /** Resolve a typed directory or file name to its entry. */
 export function resolveDir(arg: string, data: ShellData): ShellDir | undefined {
-	const key = arg.replace(/^\.?\/+/, "").replace(/^~\//, "").replace(/\/+$/, "").toLowerCase();
+	const key = dirKey(arg);
 	return data.dirs.find(
 		(d) => d.name.replace(/\/$/, "") === key || d.aliases.includes(key),
 	);
