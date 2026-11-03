@@ -1,18 +1,31 @@
 ---
+import PixelWordmark from "@/components/beta/PixelWordmark.astro";
 import { columnsOf, renderBanner } from "@/scripts/ascii/font";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { path } from "@/lib/url";
+import { beta } from "@/lib/variant";
+import { wordmarkCss } from "@/lib/wordmark";
 
 const art = renderBanner("404");
 // Passed to the layout's <head> rather than a style="" attribute, which the CSP blocks.
-const frameCss = `.lost__frame { --cols: ${columnsOf(art)}; }`;
+const frameCss = beta ? wordmarkCss("404") : `.lost__frame { --cols: ${columnsOf(art)}; }`;
 ---
 
 <BaseLayout title="Not found" noindex animated canonical="/404/" markdown={false} inlineCss={frameCss}>
-	<section class="container section section--wide lost">
+	<section
+		class:list={["container section section--wide lost", beta && "hero--pixel"]}
+		data-field={beta ? "" : undefined}
+	>
+		{beta && <canvas class="field-canvas" aria-hidden="true"></canvas>}
 		<h1 class="visually-hidden">Page not found</h1>
 		<div class="lost__frame">
-			<pre class="ascii lost__art" data-ascii="hero-etch" data-ascii-pointer aria-hidden="true">{art}</pre>
+			{
+				beta ? (
+					<PixelWordmark text="404" />
+				) : (
+					<pre class="ascii lost__art" data-ascii="hero-etch" data-ascii-pointer aria-hidden="true">{art}</pre>
+				)
+			}
 		</div>
 		<p class="mono muted lost__msg">?SYNTAX ERROR: no such page.</p>
 		<p class="mono"><a href={path("/")}>cd ~</a></p>

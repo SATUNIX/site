@@ -1,0 +1,542 @@
+/* Geist Pixel layer: the beta build's type and motion on top of the Proof system.
+   Linked only from beta pages (PixelHead.astro), never bundled into the stable site. Every rule is
+   scoped to html.beta, which also lifts it above the components' scoped styles.
+
+   Geist Pixel has one variable axis, ELSH (element shape): 1 square, 20 circle, 40 grid,
+   60 triangle, 80 line, and 100 wraps back to square. --elsh is registered so it can transition
+   and animate; <html data-shape> picks the site-wide value and every pixel heading morphs with it.
+   --elsh-shift adds a local offset (hover cycles animate it 0 -> 100, a seamless loop). */
+
+/* Geist Pixel, OFL-1.1, (c) Vercel with basement.studio. Vendored from the geist package. */
+@font-face {
+	font-family: "Geist Pixel";
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url("../assets/fonts/geist-pixel/GeistPixel-Variable.woff2") format("woff2");
+}
+
+@property --elsh {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 1;
+}
+
+@property --elsh-shift {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+
+html.beta {
+	--font-pixel: "Geist Pixel", "Martian Mono", ui-monospace, monospace;
+	--pixel-dot: var(--hair);
+	--pixel-hot: var(--link);
+	--pixel-fill: var(--accent);
+	/* The shell is always a dark terminal, whatever the theme. */
+	--shell-err: #ff6a4d;
+	--shell-rule: #3a3a3a;
+	--elsh: 1;
+	transition: --elsh 700ms var(--ease-out);
+}
+
+html.beta[data-shape="circle"] {
+	--elsh: 20;
+}
+
+html.beta[data-shape="grid"] {
+	--elsh: 40;
+}
+
+html.beta[data-shape="triangle"] {
+	--elsh: 60;
+}
+
+html.beta[data-shape="line"] {
+	--elsh: 80;
+}
+
+@keyframes pixel-develop {
+	from {
+		--elsh-shift: 79;
+	}
+}
+
+/* Hover cycle: out to triangle and back (alternate), never through the faint line shape. */
+@keyframes pixel-cycle {
+	to {
+		--elsh-shift: 60;
+	}
+}
+
+/* ---------- Type: where Geist Pixel is used ---------- */
+
+html.beta :is(
+		.site-header__name,
+		.site-nav a,
+		.site-nav__shell,
+		.wordmark,
+		.wordmark__char,
+		.section-head__title,
+		.area__name,
+		.post-list__title,
+		.entry__title,
+		.routes a,
+		.links dd,
+		.cv__name,
+		.cv__role,
+		.article__title,
+		.lost__msg,
+		.shell__title,
+		.shell__prompt
+	),
+html.beta :is(
+		.section-head__title,
+		.area__name,
+		.post-list__title,
+		.entry__title,
+		.routes a,
+		.links dd,
+		.cv__name,
+		.cv__role
+	)
+	* {
+	font-family: var(--font-pixel);
+	font-weight: 500;
+	font-synthesis: none;
+	letter-spacing: 0;
+	font-variation-settings: "ELSH" var(--elsh);
+}
+
+/* Where mod() is supported, a local shift loops around the axis from the current shape. */
+@supports (width: mod(3px, 2px)) {
+	html.beta :is(
+			.site-header__name,
+			.site-nav a,
+			.wordmark__char,
+			.section-head__title,
+			.area__name,
+			.post-list__title,
+			.entry__title,
+			.routes a,
+			.links dd,
+			.cv__name,
+			.cv__role,
+			.article__title,
+			.lost__msg
+		),
+	html.beta :is(
+			.section-head__title,
+			.area__name,
+			.post-list__title,
+			.entry__title,
+			.routes a,
+			.links dd,
+			.cv__name,
+			.cv__role
+		)
+		* {
+		font-variation-settings: "ELSH" mod(var(--elsh) + var(--elsh-shift), 100);
+	}
+}
+
+html.beta .section-head__title {
+	line-height: 0.95;
+}
+
+html.beta :is(.post-list__title, .entry__title) {
+	line-height: 1.12;
+	text-wrap: balance;
+}
+
+html.beta .cv__name {
+	text-transform: none;
+	line-height: 0.85;
+}
+
+html.beta .article__title {
+	line-height: 1;
+	text-wrap: balance;
+}
+
+html.beta .links dd {
+	font-size: var(--text-h1);
+}
+
+html.beta .routes a {
+	font-size: var(--text-h1);
+	font-weight: 500;
+}
+
+html.beta .lost__msg {
+	font-size: var(--text-h2);
+}
+
+@media (max-width: 48rem) {
+	html.beta :is(.routes a, .links dd) {
+		font-size: var(--text-h2);
+	}
+}
+
+/* Headings develop through every shape as they type in on scroll, and articles as they load. */
+html.beta[data-motion="on"]
+	:is(
+		.section-head__title,
+		.area__name,
+		.post-list__title,
+		.entry__title,
+		.routes a,
+		.links dd,
+		.cv__name,
+		.cv__role
+	)
+	.reveal__art[data-inview] {
+	animation:
+		ascii-in var(--dur-slow) var(--ease-out),
+		pixel-develop 1.3s var(--ease-out);
+}
+
+html.beta .article__title {
+	animation: pixel-develop 1.4s var(--ease-out);
+}
+
+/* ---------- Header and footer ---------- */
+
+html.beta .site-header__name {
+	gap: var(--space-2);
+	font-size: 1.25rem;
+	text-transform: none;
+}
+
+html.beta .site-header__tag {
+	padding: 0.2rem 0.35rem;
+	background: var(--accent);
+	color: var(--on-accent);
+	font-family: var(--font-mono);
+	font-size: 0.5625rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	line-height: 1;
+	text-transform: uppercase;
+}
+
+html.beta .site-nav {
+	font-size: 0.9375rem;
+	text-transform: none;
+}
+
+html.beta .site-nav__shell {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+	appearance: none;
+	margin: 0;
+	padding: var(--space-2) var(--space-3);
+	border: 0;
+	border-left: var(--hairline) solid var(--hair);
+	background: transparent;
+	color: var(--fg);
+	font-size: inherit;
+	cursor: pointer;
+}
+
+html.beta .site-nav__shell[hidden] {
+	display: none;
+}
+
+html.beta .site-nav__shell kbd {
+	padding: 0.1rem 0.35rem;
+	border: var(--hairline) solid currentColor;
+	font-family: var(--font-mono);
+	font-size: var(--text-micro);
+	line-height: 1;
+}
+
+html.beta .site-nav__shell:hover {
+	background: var(--accent);
+	color: var(--on-accent);
+}
+
+html.beta:not([data-motion="paused"]) :is(.site-header__name, .site-nav a):hover {
+	animation: pixel-cycle 0.9s ease-in-out infinite alternate;
+}
+
+/* Phones: keep the nav to one row beside the shell opener. */
+@media (max-width: 40rem) {
+	html.beta .site-nav {
+		font-size: 0.8125rem;
+	}
+
+	html.beta :is(.site-nav a, .site-nav__shell) {
+		padding-inline: var(--space-2);
+	}
+
+	html.beta .site-nav__label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+	}
+}
+
+html.beta .site-footer__beta {
+	margin-left: auto;
+}
+
+/* ---------- Hero: dot-matrix field and wordmark ---------- */
+
+html.beta .hero--pixel {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+	touch-action: pan-y;
+}
+
+html.beta .field-canvas {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+/* Small text over the field sits on a ground-coloured chip so the dots never cross it. */
+html.beta .hero--pixel :is(.hero__eyebrow, .hero__axis) {
+	width: fit-content;
+	padding: 0.2em 0.4em;
+	margin-inline: -0.4em;
+	background: var(--bg);
+}
+
+/* --advance (the name's width in em, from src/scripts/pixel/metrics.ts) comes from the page's
+   inline CSS, so the name fills its column exactly at any width. */
+html.beta .wordmark {
+	margin: 0;
+	font-size: min(17rem, calc(100cqi / (var(--advance, 2.5) + 0.03)));
+	line-height: 0.8;
+	white-space: pre;
+	color: var(--fg);
+	user-select: none;
+}
+
+html.beta .wordmark__char {
+	display: inline-block;
+}
+
+html.beta .hero__axis {
+	display: flex;
+	gap: var(--space-3);
+	margin-top: var(--space-5);
+	font-variant-numeric: tabular-nums;
+}
+
+html.beta .hero__axis [data-axis-name] {
+	color: var(--fg);
+}
+
+/* ---------- Readout: live local time ---------- */
+
+html.beta .readout__clock {
+	font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Pixel fill on rows and tiles ---------- */
+
+html.beta [data-fill] {
+	position: relative;
+	isolation: isolate;
+}
+
+html.beta .fill-canvas {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+}
+
+/* While the fill runs (motion on), the canvas paints the accent: hold the instant CSS hover
+   colours back until the fill covers the row ([data-lit]). With motion off, the plain hover
+   states in the components apply unchanged. */
+html.beta[data-fill-live] .area:hover {
+	background: var(--surface);
+}
+
+html.beta[data-fill-live] :is(.post-list__item, .routes li, .links__row):hover {
+	background: transparent;
+}
+
+html.beta[data-fill-live] :is(.area, .post-list__item, .routes li, .links__row):not([data-lit]):hover {
+	color: var(--fg);
+}
+
+html.beta[data-fill-live]
+	:is(.area, .post-list__item, .routes li, .links__row):not([data-lit]):hover
+	:is(.meta, .area__text, .post-list__desc, .routes__note, .routes__prompt) {
+	color: var(--muted);
+}
+
+html.beta [data-fill][data-lit],
+html.beta [data-fill][data-lit] :is(.meta, .muted, .area__text, .post-list__desc, .routes__note, .routes__prompt) {
+	color: var(--on-accent);
+}
+
+html.beta [data-fill][data-lit] :focus-visible {
+	outline-color: var(--on-accent);
+}
+
+html.beta:not([data-motion="paused"])
+	[data-fill][data-lit]
+	:is(.area__name, .post-list__title, .routes a, .links dd) {
+	animation: pixel-cycle 1.2s ease-in-out infinite alternate;
+}
+
+/* ---------- Shell ---------- */
+
+html.beta .shell {
+	position: fixed;
+	inset: max(8vh, 3rem) 0 auto;
+	width: min(46rem, calc(100% - 2 * var(--gutter)));
+	max-height: min(34rem, calc(100% - 6rem));
+	margin: 0 auto;
+	padding: 0;
+	border: var(--border) solid var(--rule);
+	background: var(--code-bg);
+	color: var(--code-fg);
+}
+
+html.beta .shell[open] {
+	display: flex;
+	flex-direction: column;
+	animation: shell-in 240ms steps(6, end);
+}
+
+html.beta .shell::backdrop {
+	background: rgba(0, 0, 0, 0.45);
+}
+
+@keyframes shell-in {
+	from {
+		clip-path: inset(0 0 100% 0);
+	}
+
+	to {
+		clip-path: inset(0);
+	}
+}
+
+html.beta .shell__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-3);
+	padding: var(--space-2) var(--space-3);
+	border-bottom: var(--hairline) solid var(--shell-rule);
+	color: var(--code-dim);
+}
+
+html.beta .shell__title {
+	font-size: var(--text-small);
+}
+
+html.beta .shell__close {
+	appearance: none;
+	margin: 0;
+	padding: 0.25rem 0.5rem;
+	border: var(--hairline) solid var(--shell-rule);
+	background: transparent;
+	color: var(--code-dim);
+	font-family: var(--font-mono);
+	font-size: var(--text-micro);
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+html.beta .shell__close:hover {
+	color: var(--code-fg);
+	border-color: var(--code-fg);
+}
+
+html.beta .shell__out {
+	flex: 1 1 auto;
+	min-height: 9rem;
+	overflow-y: auto;
+	padding: var(--space-3);
+	font-family: var(--font-mono);
+	font-size: var(--text-small);
+	line-height: 1.75;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+html.beta .shell__line--hi {
+	color: var(--code-hl);
+}
+
+html.beta .shell__line--dim {
+	color: var(--code-dim);
+}
+
+html.beta .shell__line--err {
+	color: var(--shell-err);
+}
+
+html.beta .shell__out a {
+	color: var(--code-fg);
+	text-decoration-color: var(--code-dim);
+	text-decoration-thickness: var(--hairline);
+}
+
+html.beta .shell__out a:hover {
+	background: var(--code-hl);
+	color: #000000;
+}
+
+html.beta .shell__in {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	padding: var(--space-2) var(--space-3);
+	border-top: var(--hairline) solid var(--shell-rule);
+}
+
+html.beta .shell__prompt {
+	color: var(--code-hl);
+	font-size: var(--text-body);
+}
+
+html.beta .shell__in input {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: var(--space-2) 0;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	color: var(--code-fg);
+	caret-color: var(--code-hl);
+	font-family: var(--font-mono);
+	font-size: max(16px, var(--text-small));
+}
+
+html.beta .shell__in input::placeholder {
+	color: var(--code-dim);
+}
+
+/* ---------- Print: the plain faces, no canvases or shell ---------- */
+
+@media print {
+	html.beta :is(.fill-canvas, .field-canvas, .shell, .site-nav__shell, .site-header__tag) {
+		display: none !important;
+	}
+
+	html.beta :is(.section-head__title, .post-list__title, .entry__title, .cv__name, .cv__role, .article__title, .links dd),
+	html.beta :is(.section-head__title, .post-list__title, .entry__title, .cv__name, .cv__role, .links dd) * {
+		font-family: var(--font-sans);
+		font-weight: 700;
+		animation: none;
+	}
+}

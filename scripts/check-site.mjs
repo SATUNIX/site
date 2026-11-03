@@ -11,6 +11,10 @@
 //   4. CSP coverage    - every built HTML page carries a Content-Security-Policy, every inline
 //                        <script>/<style> is allowed by a hash in it, and there are no inline
 //                        style="" attributes or on* event handlers (which the policy blocks).
+//   5. Beta build      - when dist/beta/ exists (the Geist Pixel build), its routes were emitted,
+//                        every page is noindex with a canonical on the stable site, and no
+//                        internal href/src escapes the beta base path except links marked
+//                        data-variant-link (the "stable site" link).
 //
 // It does NOT validate HTML, DNS, deployment or comment semantics. Node built-ins only.
 import { createHash } from "node:crypto";
@@ -66,6 +70,19 @@ const EXPECTED_ROUTES = [
 	"links.md",
 	"blog.md",
 	"sitemap-index.xml",
+];
+
+// The beta build's folder in dist/; must match `betaPath` in src/config/site.ts.
+const BETA_DIR = "beta";
+const BETA_ROUTES = [
+	"index.html",
+	"blog/index.html",
+	"cv/index.html",
+	"links/index.html",
+	"work/index.html",
+	"projects/index.html",
+	"404.html",
+	"robots.txt",
 ];
 
 const errors = [];
@@ -160,6 +177,42 @@ function checkCsp(file) {
 	}
 }
 
+/** The stable site's base path ("/site/"), read from the built homepage's canonical URL. */
+function stableBase() {
+	const html = fs.readFileSync(path.join(distDir, "index.html"), "utf8");
+	const canonical = html.match(/<link rel="canonical" href="([^"]+)"/);
+	return canonical ? new URL(canonical[1]).pathname : "/";
+}
+
+function checkBeta() {
+	const betaDir = path.join(distDir, BETA_DIR);
+	if (!fs.existsSync(betaDir)) return;
+	for (const route of BETA_ROUTES) {
+		if (!fs.existsSync(path.join(betaDir, route))) {
+			errors.push(`dist/${BETA_DIR}/${route}: expected beta build output is missing`);
+		}
+	}
+	const base = stableBase();
+	const betaBase = `${base}${BETA_DIR}/`;
+	for (const file of walk(betaDir, new Set([".html"]))) {
+		const html = fs.readFileSync(file, "utf8");
+		if (!/<meta name="robots" content="noindex"/.test(html)) {
+			errors.push(`${rel(file)}: beta page is not noindex`);
+		}
+		const canonical = html.match(/<link rel="canonical" href="([^"]+)"/);
+		if (!canonical || new URL(canonical[1]).pathname.startsWith(betaBase)) {
+			errors.push(`${rel(file)}: beta canonical must point at the stable page`);
+		}
+		for (const [tag] of html.matchAll(/<[a-z][^>]*>/gi)) {
+			if (/^<link rel="canonical"/.test(tag) || /\sdata-variant-link\b/.test(tag)) continue;
+			for (const [, url] of tag.matchAll(/\s(?:href|src)="(\/[^"]*)"/g)) {
+				if (url.startsWith("//") || url.startsWith(betaBase)) continue;
+				errors.push(`${rel(file)}: ${url} leaves the beta (mark deliberate links data-variant-link)`);
+			}
+		}
+	}
+}
+
 if (!fs.existsSync(srcDir)) {
 	errors.push("src/: directory is missing");
 } else {
@@ -172,6 +225,7 @@ if (!fs.existsSync(srcDir)) {
 checkDistRoutes();
 if (fs.existsSync(distDir)) {
 	for (const file of walk(distDir, new Set([".html"]))) checkCsp(file);
+	checkBeta();
 }
 
 if (errors.length > 0) {

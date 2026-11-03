@@ -1,7 +1,9 @@
 ---
 // Site name and primary navigation. Plain anchors; the current page is marked for AT and style.
+// The beta adds a "beta" tag and a shell opener (hidden until the runtime is ready).
 import { site } from "@/config/site";
 import { path } from "@/lib/url";
+import { beta } from "@/lib/variant";
 
 const nav = [
 	{ href: path("blog/"), label: "writing", match: "blog/" },
@@ -15,7 +17,9 @@ const here = Astro.url.pathname;
 
 <header class="site-header">
 	<div class="container site-header__inner">
-		<a class="site-header__name" href={path("/")}>{site.name}</a>
+		<a class="site-header__name" href={path("/")}
+			>{site.name}{beta && <span class="site-header__tag">beta</span>}</a
+		>
 		<nav class="site-nav" aria-label="Primary">
 			{
 				nav.map((item) => (
@@ -23,6 +27,20 @@ const here = Astro.url.pathname;
 						{item.label}
 					</a>
 				))
+			}
+			{
+				beta && (
+					<button
+						class="site-nav__shell"
+						type="button"
+						data-shell-open
+						aria-haspopup="dialog"
+						aria-keyshortcuts="/"
+						hidden
+					>
+						<kbd aria-hidden="true">/</kbd><span class="site-nav__label">shell</span>
+					</button>
+				)
 			}
 		</nav>
 	</div>

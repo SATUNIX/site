@@ -10,9 +10,17 @@ import { defineConfig } from "astro/config";
 
 import { site } from "./src/config/site.ts";
 
+// The Geist Pixel beta is a second build of the same source (scripts/build-beta.mjs sets
+// PUBLIC_SITE_VARIANT=beta): served from `betaPath` under the base, written to the matching
+// folder of dist/, and never in the sitemap (its pages are noindex).
+const beta = process.env.PUBLIC_SITE_VARIANT === "beta";
+const stableBase = site.base || "/";
+const betaDir = site.betaPath.replace(/^\/+|\/+$/g, "");
+
 export default defineConfig({
 	site: site.url,
-	base: site.base || "/",
+	base: beta ? `${stableBase.replace(/\/?$/, "/")}${betaDir}/` : stableBase,
+	outDir: beta ? `./dist/${betaDir}` : "./dist",
 	output: "static",
 	trailingSlash: "always",
 	security: {
@@ -40,10 +48,12 @@ export default defineConfig({
 		// CSP. Token colours live in src/styles/tokens.css.
 		syntaxHighlight: "prism",
 	},
-	integrations: [
-		sitemap({
-			// The custom 404 page must never appear in the sitemap.
-			filter: (page) => !page.includes("/404"),
-		}),
-	],
+	integrations: beta
+		? []
+		: [
+				sitemap({
+					// The custom 404 page must never appear in the sitemap.
+					filter: (page) => !page.includes("/404"),
+				}),
+			],
 });

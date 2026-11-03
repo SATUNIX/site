@@ -8,6 +8,8 @@ Personal site and CV of Tony: offensive security and security engineering.
 
 **Live:** <https://satunix.github.io/site/>
 
+**Beta (Geist Pixel):** <https://satunix.github.io/site/beta/>
+
 A site built on the Proof design system (paper and ink, 2px rules, one lime accent; light by default, dark by OS setting) with animated ASCII type. It is a fully static
 [Astro](https://astro.build) build with no framework runtime, no CSS framework and no backend.
 The animation engine is written from scratch, framework-free and unit tested, ships about
@@ -49,7 +51,8 @@ npm run dev       # http://localhost:4321/site/ with live reload; drafts visible
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Dev server with live reload |
-| `npm run build` | Derive the PGP fingerprint, then build to `dist/` |
+| `npm run dev:beta` | Dev server for the Geist Pixel beta (<http://localhost:4321/site/beta/>) |
+| `npm run build` | Derive the PGP fingerprint, then build the site to `dist/` and the beta to `dist/beta/` |
 | `npm run preview` | Serve the production build locally |
 | `npm run check` | Astro and TypeScript diagnostics |
 | `npm test` | Unit tests: URL, CSP and PGP helpers, animation engine, banner font |
@@ -63,6 +66,9 @@ npm run dev       # http://localhost:4321/site/ with live reload; drafts visible
 3. **Routes:** every expected page, feed and Markdown twin was emitted.
 4. **CSP coverage:** every built page has a policy, every inline block is hashed in it,
    and there are no inline `style=""` attributes or `on*` handlers.
+5. **Beta isolation:** the beta's routes were emitted, every beta page is `noindex` with its
+   canonical on the stable page, and no internal link leaves `/site/beta/` except the ones
+   marked `data-variant-link`.
 
 ## Project layout
 
@@ -74,11 +80,13 @@ src/
   pages/                routes, plus rss.xml, robots.txt, llms.txt, llms-full.txt, *.md twins
   layouts/              page shell (meta, CSP-hashed inline CSS) and article layout
   components/           header, footer, hero, post and entry lists, reveal text
-  lib/                  base-path URLs, CSP hashing, Markdown twins, posts, PGP, hero geometry
+  components/beta/      Geist Pixel layer: head assets, wordmark, shell dialog, runtime loader
+  lib/                  base-path URLs, CSP hashing, Markdown twins, posts, PGP, hero geometry, build variant
   scripts/ascii/        animation engine (framework-free, unit tested)
-  styles/               tokens, base, layout, prose, ascii, print
-  assets/fonts/         Archivo, Martian Mono and JetBrains Mono (ASCII art only), all OFL-1.1, fingerprinted by the bundler
-scripts/                build-time fingerprint derivation, offline site checks
+  scripts/pixel/        Geist Pixel runtime: dot field, pixel fill, shapes, metrics, shell (unit tested)
+  styles/               tokens, base, layout, prose, ascii, print, pixel (beta only)
+  assets/fonts/         Archivo, Martian Mono, JetBrains Mono (ASCII art only) and Geist Pixel (beta), all OFL-1.1, fingerprinted by the bundler
+scripts/                build-time fingerprint derivation, beta build, offline site checks
 .github/                CI and deploy, CodeQL, Dependabot
 ```
 
@@ -150,6 +158,51 @@ Opt an element in with `<RevealText text="..." preset="copy" as="p" />`, or `dat
 `pre`. Article bodies stay static so long reads never wait on an animation, and print output
 always shows the real text.
 
+## Beta: Geist Pixel
+
+A second build of the same source, published at
+[`/site/beta/`](https://satunix.github.io/site/beta/). Pages, layout and content are the same;
+the beta sets the display type in [Geist Pixel](https://vercel.com/font) and makes the existing
+elements respond:
+
+- **Shape-morphing type.** Geist Pixel has one variable axis, `ELSH` (element shape: square,
+  circle, grid, triangle, line, then back to square). Headings, the nav and titles use it, and
+  the footer's **pixel** switch (or `shape <name>` in the shell) morphs every one of them at once.
+  The choice is remembered and applied before first paint.
+- **Live wordmark.** The ASCII banner becomes the name in Geist Pixel over a dot-matrix field.
+  The pointer lights the dots and reshapes the letters it passes; a click or tap sends a ring
+  out through the field and the letters. On first view each letter develops through every
+  shape before it settles. A readout shows the axis value under the pointer.
+- **Develop on reveal.** Headings still type in on scroll, and now run through the shapes as
+  they do.
+- **Pixel fill.** Scope tiles, post rows, the index and the links flood with accent pixels
+  from wherever the pointer entered (or from the left on keyboard focus), and their titles
+  cycle shapes while lit.
+- **Site shell.** Press `/` (or Ctrl/Cmd+K, or the header's **shell** button) on any page:
+  `ls`, `cd work/`, `ls writing/`, `open 3`, `cat cv.txt`, `whoami`, `shape circle`,
+  `theme dark`, `motion off`, with Tab completion and history.
+- **Local time.** The homepage readout gains a live Brisbane clock (`profile.timeZone`).
+
+The same rules hold as on the stable site: the real text is always the HTML, motion pauses with
+the footer switch and stops for `prefers-reduced-motion`, the CSP has no `'unsafe-inline'`, and
+article bodies stay static. The beta adds about 7 KB of gzipped JavaScript, 2 KB of CSS and the
+39 KB font, and the stable build ships none of it.
+
+How it is wired:
+
+- `scripts/build-beta.mjs` runs a second Astro build with `PUBLIC_SITE_VARIANT=beta`;
+  `astro.config.mjs` turns that into the base `/site/beta/` and the output `dist/beta/`
+  (`betaPath` in `src/config/site.ts`). Both land in one Pages deploy.
+- Components check `beta` from `src/lib/variant.ts`. The beta stylesheet is linked by URL
+  from `components/beta/PixelHead.astro`, so it is never bundled into stable pages; stable HTML
+  is unchanged.
+- Beta pages are `noindex` with canonical URLs on the stable pages, robots are turned away, and
+  there is no beta sitemap. GitHub Pages serves the stable `404.html` for every missing path.
+
+To **promote** the beta, make `beta` true for the main build (or inline the beta branches) and
+drop the second build. To **drop** it, remove `components/beta/`, `scripts/pixel/`,
+`styles/pixel.css`, the `beta &&` branches and the second build step.
+
 ## Security
 
 GitHub Pages cannot set response headers, so the policy is delivered as a
@@ -201,5 +254,5 @@ that origin and `base` to `""`; nothing else needs to change.
 ## License
 
 The source code is [MIT](LICENSE). The written and personal content (`src/content/`,
-`src/data/`, `public/keys/`) is all rights reserved. Archivo, Martian Mono and JetBrains Mono are under the SIL Open Font
-License 1.1.
+`src/data/`, `public/keys/`) is all rights reserved. Archivo, Martian Mono, JetBrains Mono and Geist Pixel (Vercel, with
+basement.studio) are under the SIL Open Font License 1.1.

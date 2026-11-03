@@ -1,13 +1,18 @@
 ---
-// Footer: copyright, feed link and the motion toggle on animated pages.
+// Footer: copyright, feed link and the motion toggle on animated pages. The beta adds the
+// pixel-shape switch (hidden until the runtime is ready) and a link to the same page on the
+// stable site.
 import { site } from "@/config/site";
-import { path } from "@/lib/url";
+import { path, stableUrl } from "@/lib/url";
+import { beta } from "@/lib/variant";
 
 interface Props {
 	motionToggle?: boolean;
+	/** Site-relative path of this page, for the beta's link to its stable twin. */
+	here?: string;
 }
 
-const { motionToggle = false } = Astro.props;
+const { motionToggle = false, here = "/" } = Astro.props;
 const year = new Date().getFullYear();
 ---
 
@@ -20,6 +25,20 @@ const year = new Date().getFullYear();
 				<button class="text-button" type="button" data-motion-toggle aria-pressed="false">
 					motion: <span data-motion-label>on</span>
 				</button>
+			)
+		}
+		{
+			beta && (
+				<button class="text-button" type="button" data-shape-toggle hidden>
+					pixel: <span data-shape-label>square</span>
+				</button>
+			)
+		}
+		{
+			beta && (
+				<a class="site-footer__beta" href={stableUrl(here)} data-variant-link>
+					stable site
+				</a>
 			)
 		}
 	</div>

@@ -9,6 +9,8 @@ import {
 	joinWithBase,
 	normalizeBase,
 	path,
+	sitePath,
+	stableUrl,
 } from "./url";
 
 // Whatever origin src/config/site.ts is set to (the URL API normalises and lowercases it).
@@ -77,5 +79,24 @@ describe("base-path-safe helpers", () => {
 		vi.stubEnv("BASE_URL", "/");
 		expect(absolute("/")).toBe(`${origin}/`);
 		expect(absolute("blog/")).toBe(`${origin}/blog/`);
+	});
+});
+
+describe("beta helpers", () => {
+	const stableRoot = new URL(joinWithBase(normalizeBase(site.base), "/"), site.url).toString();
+
+	it("points at the stable site whatever base this build uses", () => {
+		vi.stubEnv("BASE_URL", `${site.base}${site.betaPath}`);
+		expect(stableUrl("/")).toBe(stableRoot);
+		expect(stableUrl("work/")).toBe(`${stableRoot}work/`);
+		expect(stableUrl("/blog/post/")).toBe(`${stableRoot}blog/post/`);
+	});
+
+	it("strips the current build's base from a pathname", () => {
+		vi.stubEnv("BASE_URL", "/repo/beta/");
+		expect(sitePath("/repo/beta/")).toBe("/");
+		expect(sitePath("/repo/beta/work/")).toBe("/work/");
+		vi.stubEnv("BASE_URL", "/");
+		expect(sitePath("/work/")).toBe("/work/");
 	});
 });
