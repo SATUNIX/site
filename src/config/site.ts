@@ -21,6 +21,11 @@ export interface SiteConfig {
 	 * GitHub Pages project site.
 	 */
 	base: string;
+	/**
+	 * Where the beta build (Geist Pixel) is served, relative to `base`: "beta/" publishes it at
+	 * /<base>/beta/. Built by scripts/build-beta.mjs into the matching folder of dist/.
+	 */
+	betaPath: string;
 	/** Author name for feed metadata, the footer and print output. */
 	author: string;
 	/** External profiles and the feed. */
@@ -52,6 +57,7 @@ export const site: SiteConfig = {
 	// <user>.github.io repository) set url to that origin and base to "".
 	url: "https://satunix.github.io",
 	base: "/site/",
+	betaPath: "beta/",
 	author: "Tony",
 	links: {
 		github: "https://github.com/satunix",

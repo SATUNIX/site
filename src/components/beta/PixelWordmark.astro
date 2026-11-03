@@ -1,0 +1,13 @@
+---
+// A name set in Geist Pixel, one span per letter so the runtime can give each its own shape.
+// Purely visual (aria-hidden): the page carries the real name in a heading. Size it with
+// wordmarkCss() from src/lib/wordmark.ts, emitted through the page's inlineCss.
+interface Props {
+	text: string;
+}
+
+const { text } = Astro.props;
+const letters = [...text.toUpperCase()];
+---
+
+<p class="wordmark" data-wordmark aria-hidden="true">{letters.map((c) => <span class="wordmark__char">{c}</span>)}</p>

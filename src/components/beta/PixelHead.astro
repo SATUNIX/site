@@ -1,0 +1,29 @@
+---
+// <head> additions for the beta build: the Geist Pixel stylesheet and font preload, and an
+// inline, render-blocking script that applies the saved pixel shape and theme before first
+// paint (so nothing morphs or flashes on load). Its hash is added to the CSP.
+//
+// The stylesheet is imported as a URL, not as CSS, so Astro never bundles it into the stable
+// site: Vite still processes it (minified, font URL fingerprinted) and only beta pages link it.
+import fontUrl from "@/assets/fonts/geist-pixel/GeistPixel-Variable.woff2?url";
+import { inlineScript } from "@/lib/csp";
+import { SHAPE_KEY, SHAPE_NAMES } from "@/scripts/pixel/shapes";
+import pixelCss from "@/styles/pixel.css?url";
+
+const script = inlineScript(
+	Astro,
+	`(function () {
+	var d = document.documentElement;
+	try {
+		var s = localStorage.getItem(${JSON.stringify(SHAPE_KEY)});
+		if (${JSON.stringify(SHAPE_NAMES)}.indexOf(s) >= 0) d.dataset.shape = s;
+		var t = localStorage.getItem("theme");
+		if (t === "light" || t === "dark") d.dataset.theme = t;
+	} catch (e) {}
+})();`,
+);
+---
+
+<script is:inline set:html={script}></script>
+<link rel="preload" href={fontUrl} as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href={pixelCss} />

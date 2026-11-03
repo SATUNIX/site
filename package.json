@@ -1,7 +1,7 @@
 {
   "name": "site",
   "version": "1.0.0",
-  "description": "Personal site and CV: static Astro build with animated ASCII type, deployed to GitHub Pages.",
+  "description": "Personal site and CV: static Astro build with animated ASCII type and a Geist Pixel beta, deployed to GitHub Pages.",
   "private": true,
   "license": "SEE LICENSE IN LICENSE",
   "author": "Tony (https://github.com/SATUNIX)",
@@ -16,7 +16,8 @@
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "build": "node scripts/derive-fingerprint.mjs && astro build",
+    "dev:beta": "node scripts/build-beta.mjs dev",
+    "build": "node scripts/derive-fingerprint.mjs && astro build && node scripts/build-beta.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "check:site": "node scripts/check-site.mjs",

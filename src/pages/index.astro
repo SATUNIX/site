@@ -9,6 +9,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { heroBanner } from "@/lib/hero";
 import { getPublishedPosts } from "@/lib/posts";
 import { path } from "@/lib/url";
+import { beta } from "@/lib/variant";
+import { wordmarkCss } from "@/lib/wordmark";
 
 const recent = (await getPublishedPosts()).slice(0, 3);
 const areas = profile.areas.map((area) => ({ ...area, href: path(area.page) }));
@@ -19,9 +21,12 @@ const routes = [
 	{ cmd: "cat cv.txt", href: path("cv/"), note: "roles, capabilities, certifications" },
 	{ cmd: "ls links/", href: path("links/"), note: "GitHub, Gravatar and feed" },
 ];
+// Beta: rows and tiles that flood with pixels on hover (see src/scripts/pixel/index.ts).
+const fill = beta ? "" : undefined;
+const heroCss = beta ? wordmarkCss(site.name) : heroBanner(site.name).css;
 ---
 
-<BaseLayout animated canonical="/" inlineCss={heroBanner(site.name).css}>
+<BaseLayout animated canonical="/" inlineCss={heroCss}>
 	<HeroArtwork />
 
 	<section class="container section section--split about" aria-labelledby="about">
@@ -53,6 +58,18 @@ const routes = [
 						</div>
 					))
 				}
+				{
+					beta && profile.timeZone && (
+						<div class="readout__row" hidden>
+							<dt>local</dt>
+							<dd>
+								<time class="readout__clock" data-clock data-tz={profile.timeZone}>
+									--:--:--
+								</time>
+							</dd>
+						</div>
+					)
+				}
 			</dl>
 		</div>
 	</section>
@@ -62,7 +79,7 @@ const routes = [
 		<ol class="areas" role="list">
 			{
 				areas.map((area, i) => (
-					<li class="area">
+					<li class="area" data-fill={fill}>
 						<p class="meta">{`0${i + 1}`}</p>
 						<h3 class="area__name">
 							<a href={area.href}>
@@ -87,7 +104,7 @@ const routes = [
 		<ul class="routes" role="list">
 			{
 				routes.map((r) => (
-					<li>
+					<li data-fill={fill}>
 						<a href={r.href}>
 							<span class="routes__prompt" aria-hidden="true">$ </span>
 							<RevealText preset="label" text={r.cmd} />

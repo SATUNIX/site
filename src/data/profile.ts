@@ -20,6 +20,8 @@ export interface Profile {
 	areas: Area[];
 	/** Key info shown as a compact readout next to the intro. */
 	facts: Fact[];
+	/** IANA time zone for the beta's live "local" time row, or omit to leave it off. */
+	timeZone?: string;
 }
 
 export const profile: Profile = {
@@ -52,4 +54,5 @@ export const profile: Profile = {
 		{ key: "lab", value: "private GitLab + AWS" },
 		{ key: "status", value: "not open to work" },
 	],
+	timeZone: "Australia/Brisbane",
 };

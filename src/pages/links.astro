@@ -6,6 +6,7 @@ import { site } from "@/config/site";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { fingerprint, formatFingerprint, isPgpConfigured } from "@/lib/pgp";
 import { asset, path } from "@/lib/url";
+import { beta } from "@/lib/variant";
 
 // Only links that exist are listed; a `null` in site config leaves that row off entirely.
 const entries = [
@@ -17,6 +18,8 @@ const entries = [
 ].filter((entry): entry is { key: string; href: string } => entry.href !== null);
 const display = (href: string) => href.replace(/^mailto:/, "").replace(/^https?:\/\//, "");
 const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
+// Beta: rows flood with pixels on hover (see src/scripts/pixel/index.ts).
+const fill = beta ? "" : undefined;
 ---
 
 <BaseLayout title="Links" description={`Where to find ${site.name}.`} animated>
@@ -25,7 +28,7 @@ const pgp = isPgpConfigured() && fingerprint.fingerprint ? fingerprint : null;
 		<dl class="links">
 			{
 				entries.map((entry) => (
-					<div class="links__row">
+					<div class="links__row" data-fill={fill}>
 						<dt class="meta">{entry.key}</dt>
 						<dd>
 							<a href={entry.href} rel={entry.href.startsWith("http") ? "me noopener" : undefined}>

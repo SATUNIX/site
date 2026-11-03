@@ -1,0 +1,32 @@
+---
+// The site shell: a terminal-style dialog for getting around from the keyboard (press / on any
+// beta page). Its data comes from PixelShellData.astro in <head>; the runtime is
+// src/scripts/pixel/shell-dom.ts. Hidden openers appear once JS is ready.
+import { site } from "@/config/site";
+import { sitePath } from "@/lib/url";
+
+const path = sitePath(Astro.url.pathname);
+const here = path.startsWith("/") ? path : `/${path}`;
+---
+
+<dialog class="shell" data-shell aria-labelledby="shell-title">
+	<div class="shell__bar">
+		<p class="shell__title" id="shell-title">{`${site.name.toLowerCase()}@site:~${here}`}</p>
+		<button class="shell__close" type="button" data-shell-close>esc</button>
+	</div>
+	<div class="shell__out" data-shell-out role="log" aria-live="polite"></div>
+	<form class="shell__in" data-shell-form>
+		<label class="shell__prompt" for="shell-input">$</label>
+		<input
+			id="shell-input"
+			data-shell-input
+			type="text"
+			autocomplete="off"
+			autocapitalize="off"
+			spellcheck="false"
+			enterkeyhint="go"
+			placeholder="help"
+			aria-label="Shell command"
+		/>
+	</form>
+</dialog>

@@ -3,6 +3,7 @@
 import RevealText from "@/components/RevealText.astro";
 import type { BlogPost } from "@/lib/posts";
 import { path } from "@/lib/url";
+import { beta } from "@/lib/variant";
 
 interface Props {
 	posts: BlogPost[];
@@ -11,6 +12,8 @@ interface Props {
 
 const { posts, emptyLabel = "No posts yet." } = Astro.props;
 const iso = (d: Date) => d.toISOString().slice(0, 10);
+// Beta: rows flood with pixels on hover (see src/scripts/pixel/index.ts).
+const fill = beta ? "" : undefined;
 ---
 
 {
@@ -19,7 +22,7 @@ const iso = (d: Date) => d.toISOString().slice(0, 10);
 	) : (
 		<ol class="post-list" role="list">
 			{posts.map((post) => (
-				<li class="post-list__item">
+				<li class="post-list__item" data-fill={fill}>
 					<RevealText
 						as="time"
 						preset="meta"

@@ -49,3 +49,17 @@ export function asset(p: string): string {
 export function absolute(p: string = "/"): string {
 	return new URL(path(p), site.url).toString();
 }
+
+/**
+ * An absolute URL on the stable site, whichever build is running. The beta uses it for its
+ * canonical tags (so search engines credit the stable pages) and its "stable site" link.
+ */
+export function stableUrl(p: string = "/"): string {
+	return new URL(joinWithBase(normalizeBase(site.base), p), site.url).toString();
+}
+
+/** A site-relative path for `pathname`: the current build's base prefix removed. */
+export function sitePath(pathname: string): string {
+	const base = basePath();
+	return base && pathname.startsWith(base) ? pathname.slice(base.length) || "/" : pathname;
+}
