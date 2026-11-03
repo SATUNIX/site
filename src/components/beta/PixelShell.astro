@@ -1,55 +1,17 @@
 ---
 // The site shell: a terminal-style dialog for getting around from the keyboard (press / on any
-// beta page). Its data is embedded as JSON so the commands work offline and need no fetch; the
-// runtime in src/scripts/pixel/shell-dom.ts reads it. Hidden openers appear once JS is ready.
+// beta page). Its data comes from PixelShellData.astro in <head>; the runtime is
+// src/scripts/pixel/shell-dom.ts. Hidden openers appear once JS is ready.
 import { site } from "@/config/site";
-import { engagements } from "@/data/work";
-import { profile } from "@/data/profile";
-import { projects } from "@/data/projects";
-import { getPublishedPosts } from "@/lib/posts";
-import { path, sitePath } from "@/lib/url";
-import type { ShellData } from "@/scripts/pixel/shell";
+import { sitePath } from "@/lib/url";
 
-const posts = await getPublishedPosts();
-const here = sitePath(Astro.url.pathname);
-
-const data: ShellData = {
-	home: path("/"),
-	here: here.startsWith("/") ? here : `/${here}`,
-	dirs: [
-		{ name: "work/", aliases: [], href: path("work/"), note: "representative engagement types" },
-		{ name: "lab/", aliases: ["projects"], href: path("projects/"), note: "personal research" },
-		{ name: "writing/", aliases: ["blog", "posts"], href: path("blog/"), note: "notes and essays" },
-		{ name: "links/", aliases: [], href: path("links/"), note: "profiles and feed" },
-		{ name: "cv.txt", aliases: ["cv"], href: path("cv/"), note: "roles and credentials" },
-	],
-	posts: posts.map((post) => ({
-		slug: post.id,
-		title: post.data.title,
-		date: post.data.pubDate.toISOString().slice(0, 10),
-		href: path(`blog/${post.id}/`),
-	})),
-	work: engagements.map((e) => e.title),
-	lab: projects.map((p) => ({ title: p.title, status: p.status })),
-	links: [
-		{ key: "github", href: site.links.github },
-		{ key: "linkedin", href: site.links.linkedin },
-		{ key: "gravatar", href: site.links.gravatar },
-		{ key: "contact", href: site.links.contact },
-		{ key: "rss", href: path(site.links.rss) },
-	].filter((l): l is { key: string; href: string } => l.href !== null),
-	whoami: [
-		site.name.toLowerCase(),
-		...profile.facts.filter((f) => f.value).map((f) => `${f.key.padEnd(7)} ${f.value}`),
-	],
-};
-// Escape "<" so no value can close the script element early.
-const json = JSON.stringify(data).replace(/</g, "\\u003c");
+const path = sitePath(Astro.url.pathname);
+const here = path.startsWith("/") ? path : `/${path}`;
 ---
 
 <dialog class="shell" data-shell aria-labelledby="shell-title">
 	<div class="shell__bar">
-		<p class="shell__title" id="shell-title">{`${site.name.toLowerCase()}@site:~${data.here}`}</p>
+		<p class="shell__title" id="shell-title">{`${site.name.toLowerCase()}@site:~${here}`}</p>
 		<button class="shell__close" type="button" data-shell-close>esc</button>
 	</div>
 	<div class="shell__out" data-shell-out role="log" aria-live="polite"></div>
@@ -67,5 +29,4 @@ const json = JSON.stringify(data).replace(/</g, "\\u003c");
 			aria-label="Shell command"
 		/>
 	</form>
-	<script type="application/json" data-shell-data set:html={json} />
 </dialog>

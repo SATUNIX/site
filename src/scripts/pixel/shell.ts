@@ -39,6 +39,12 @@ export interface ShellData {
 	whoami: string[];
 }
 
+/**
+ * Global the page's shell data is assigned to, by an inline script PixelShell.astro renders
+ * (hashed into the CSP). It is build-time data, so it ships as code rather than as DOM text.
+ */
+export const SHELL_GLOBAL = "__siteShell";
+
 export type Action =
 	| { kind: "navigate"; href: string }
 	| { kind: "shape"; name: ShapeName | "next" }

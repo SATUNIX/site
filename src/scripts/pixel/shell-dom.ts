@@ -2,12 +2,22 @@
 //
 // Markup contract (PixelShell.astro):
 //   <dialog data-shell> ... [data-shell-out] ... <form data-shell-form><input data-shell-input>
-//   <script type="application/json" data-shell-data>{ShellData}</script>
+//   plus an inline script that assigns the page's ShellData to window[SHELL_GLOBAL].
+// The data arrives as code built with the page, never read back out of DOM text, so the hrefs
+// it holds cannot be swapped by anything that edits the page's markup.
 // Buttons with [data-shell-open] open it; so does "/" (or Ctrl/Cmd+K) outside a text field.
 // Output is built with textContent and real anchors only; nothing is parsed as HTML.
 
 import type { ShapeName } from "./shapes";
-import { commonPrefix, complete, execute, type Action, type Line, type ShellData } from "./shell";
+import {
+	commonPrefix,
+	complete,
+	execute,
+	SHELL_GLOBAL,
+	type Action,
+	type Line,
+	type ShellData,
+} from "./shell";
 
 export interface ShellHooks {
 	setShape(name: ShapeName | "next"): ShapeName;
@@ -47,15 +57,8 @@ export function initShell(hooks: ShellHooks): void {
 	const out = dialog?.querySelector<HTMLElement>("[data-shell-out]");
 	const form = dialog?.querySelector<HTMLFormElement>("[data-shell-form]");
 	const input = dialog?.querySelector<HTMLInputElement>("[data-shell-input]");
-	const raw = dialog?.querySelector<HTMLScriptElement>("[data-shell-data]")?.textContent;
-	if (!dialog || !out || !form || !input || !raw || typeof dialog.showModal !== "function") return;
-
-	let data: ShellData;
-	try {
-		data = JSON.parse(raw) as ShellData;
-	} catch {
-		return;
-	}
+	const data = (window as unknown as Record<string, ShellData | undefined>)[SHELL_GLOBAL];
+	if (!dialog || !out || !form || !input || !data || typeof dialog.showModal !== "function") return;
 
 	const history = loadHistory();
 	let cursor = history.length;

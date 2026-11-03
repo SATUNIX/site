@@ -13,6 +13,7 @@ import AsciiRuntime from "@/components/AsciiRuntime.astro";
 import PixelHead from "@/components/beta/PixelHead.astro";
 import PixelRuntime from "@/components/beta/PixelRuntime.astro";
 import PixelShell from "@/components/beta/PixelShell.astro";
+import PixelShellData from "@/components/beta/PixelShellData.astro";
 import MotionState from "@/components/MotionState.astro";
 import SiteFooter from "@/components/SiteFooter.astro";
 import SiteHeader from "@/components/SiteHeader.astro";
@@ -83,6 +84,7 @@ const stableHere = canonicalPath.replace(/^\/+/, "") === "404/" ? "/" : canonica
 		{animated && <MotionState />}
 		{inlineCss && <style is:inline set:html={inlineStyle(Astro, inlineCss)} />}
 		{beta && <PixelHead />}
+		{beta && <PixelShellData />}
 	</head>
 	<body class={bodyClass}>
 		<a class="skip-link" href="#main">Skip to content</a>
